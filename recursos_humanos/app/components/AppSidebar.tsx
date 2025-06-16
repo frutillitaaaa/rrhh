@@ -1,11 +1,13 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarHeader,
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
 
 import { LayoutDashboard, UsersRound, Building, Layers2, ContactRound } from 'lucide-react';
@@ -13,27 +15,27 @@ import { LayoutDashboard, UsersRound, Building, Layers2, ContactRound } from 'lu
 const items = [
     {
     title: "Dashboard",
-    url: "dashboard",
+    url: "/",
     icon: LayoutDashboard,
   },
   {
     title: "Cargos",
-    url: "cargos",
+    url: "/cargos",
     icon: Layers2,
   },
   {
     title: "Departamentos",
-    url: "departamentos",
+    url: "/departamentos",
     icon: Building,
   },
    {
     title: "Empleados",
-    url: "empleados",
+    url: "/empleados",
     icon: UsersRound,
   },
    {
     title: "Candidatos",
-    url: "candidatos",
+    url: "/candidatos",
     icon: ContactRound,
   },
 
@@ -41,7 +43,9 @@ const items = [
 export function AppSidebar() {
     return (
       <Sidebar>
-        <SidebarContent className="fixed top-12 left-4">
+        <SidebarHeader/>
+        <h1 className="text-2xl font-bold text-blue-600 flex justify-between items-center p-6 ">RRHH</h1>
+        <SidebarContent className="fixed top-16 left-4">
           <SidebarGroup />
           <SidebarGroupContent >
             <SidebarMenu 

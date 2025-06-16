@@ -28,10 +28,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md p-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600">RRHH</h1>
-        </header>
-
         <div className="flex pt-16 min-h-screen bg-gray-100">
           <aside className="hidden md:block w-64 bg-white shadow-md p-4">
             <SidebarProvider>
