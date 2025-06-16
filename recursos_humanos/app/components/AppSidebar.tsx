@@ -20,22 +20,22 @@ const items = [
   },
   {
     title: "Cargos",
-    url: "/cargos",
+    url: "/dashboard/cargos",
     icon: Layers2,
   },
   {
     title: "Departamentos",
-    url: "/departamentos",
+    url: "/dashboard/departamentos",
     icon: Building,
   },
    {
     title: "Empleados",
-    url: "/empleados",
+    url: "/dashboard/empleados",
     icon: UsersRound,
   },
    {
     title: "Candidatos",
-    url: "/candidatos",
+    url: "/dashboard/candidatos",
     icon: ContactRound,
   },
 
