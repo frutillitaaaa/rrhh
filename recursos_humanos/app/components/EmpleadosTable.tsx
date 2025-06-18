@@ -36,47 +36,57 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-const data: Payment[] = [
+import { Empleado } from "@/types/empleado"
+
+const data: Empleado[] = [
   {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@example.com",
+    id: "1",
+    nombre: "Denzel",
+    apellido: "Delgado",
+    rut: "12345678-9",
+    correo: "denzel.delgado@empresadejoselito.cl",
+    telefono: "+56912345678",
+    cargo: "Junior Developer",
+    sueldo_liquido: 0,
+    sueldo_bruto: 1500000,
+    estado: 0,
+    departamento: "Software",
+    fecha_contratacion: "15-06-2025",
+    dias_vacaciones: 20,
   },
   {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@example.com",
+    id: "2",
+    nombre: "Franco",
+    apellido: "Pineda",
+    rut: "15.166.631-0",
+    correo: "franco.pineda@empresadejoselito.cl",
+    telefono: "+56912345678",
+    cargo: "Arquitecto de Software",
+    sueldo_liquido: 0,
+    sueldo_bruto: 1900000,
+    estado: 0,
+    departamento: "Software",
+    fecha_contratacion: "13-06-2025",
+    dias_vacaciones: 20,
   },
   {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@example.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@example.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@example.com",
+    id: "3",
+    nombre: "Rizzo",
+    apellido: "Rizzo",
+    rut: "21.319.198-5",
+    correo: "rizzo.rizzo@empresadejoselito.cl",
+    telefono: "+56912345678",
+    cargo: "Project Mañañer",
+    sueldo_liquido: 0,
+    sueldo_bruto:2000000,
+    estado: 0,
+    departamento: "Software",
+    fecha_contratacion: "15-06-2025",
+    dias_vacaciones: 30,
   },
 ]
 
-export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
-}
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Empleado>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -100,42 +110,73 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "rut",
+    header: "Rut",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <div className="capitalize">{row.getValue("rut")}</div>
     ),
   },
   {
-    accessorKey: "email",
+    accessorKey: "nombre",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Nombre
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("nombre")}</div>,
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "apellido",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Apellido
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("apellido")}</div>,
+  },
+  {
+    accessorKey: "cargo",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Cargo
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("cargo")}</div>,
+  },
+  {
+    accessorKey: "sueldo_liquido",
+    header: () => <div className="text-right">Último Sueldo</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
+      const sueldo_liquido = parseFloat(row.getValue("sueldo_liquido"))
 
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
+
+      const formatted = new Intl.NumberFormat("es-CL", {
         style: "currency",
-        currency: "USD",
-      }).format(amount)
+        currency: "CLP",
+      }).format(sueldo_liquido)
 
       return <div className="text-right font-medium">{formatted}</div>
     },
   },
+  
   {
     id: "actions",
     enableHiding: false,
@@ -155,7 +196,7 @@ export const columns: ColumnDef<Payment>[] = [
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(payment.id)}
             >
-              Copy payment ID
+              Editar empleado
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>
@@ -199,10 +240,10 @@ export function EmpleadosTable() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Buscar un empleado..."
+          value={(table.getColumn("rut")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("rut")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

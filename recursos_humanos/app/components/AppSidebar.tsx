@@ -17,20 +17,19 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 
-import { LayoutDashboard, UsersRound, Building, Layers2, ContactRound, UserPlus } from 'lucide-react';
+import { LayoutDashboard, UsersRound, Building, Layers2, ContactRound, UserPlus, Timer } from 'lucide-react';
 
 const items = [
-   {
+  {
     title: "Empleados",
     url: "/dashboard/empleados",
     icon: UsersRound,
   },
-   {
+  {
     title: "Candidatos",
     url: "/dashboard/candidatos",
     icon: ContactRound,
   },
-
 ]
 export function AppSidebar() {
     return (
@@ -102,7 +101,14 @@ export function AppSidebar() {
                   </AccordionItem>
                     </Accordion>      
               </SidebarMenuItem>
-           
+              <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <a href="/dashboard/solicitudes">
+                      <Timer/>
+                      <span>Solicitudes</span>
+                    </a>
+                  </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
           <SidebarGroup />
