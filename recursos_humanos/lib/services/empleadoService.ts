@@ -1,6 +1,6 @@
 import dbConnect from '@/lib/mongoose';
 import Empleado from '@/models/Empleado';
-import { Empleado as IEmpleado, PlainEmpleado } from '@/types/empleado';
+import { Empleado as IEmpleado } from '@/types/empleado';
 
 export async function obtenerTodosLosEmpleados(): Promise<IEmpleado[]> {
     await dbConnect();
@@ -15,7 +15,7 @@ export async function obtenerEmpleadoPorId(id: string): Promise<IEmpleado | null
     return JSON.parse(JSON.stringify(empleado));
 }
 
-export async function crearEmpleado(data: Omit<PlainEmpleado, 'id'>): Promise<IEmpleado> {
+export async function crearEmpleado(data: IEmpleado): Promise<IEmpleado> {
     await dbConnect();
     const nuevoEmpleado = new Empleado(data);
     const empleadoGuardado = await nuevoEmpleado.save();

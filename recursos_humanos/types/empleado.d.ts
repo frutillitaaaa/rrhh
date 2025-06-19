@@ -14,7 +14,7 @@ export interface Historial_sueldos {
     fecha_termino: string
 }
 
-export interface PlainEmpleado extends Usuario {
+export interface Empleado extends Usuario, Document {
     cargo: string
     sueldo_liquido: number
     sueldo_bruto: number
@@ -25,4 +25,3 @@ export interface PlainEmpleado extends Usuario {
     historial_sueldos?: Historial_sueldos[]
     historial_cargos?: Historial_cargos[]
 }
-export interface Empleado extends PlainEmpleado, Document {}

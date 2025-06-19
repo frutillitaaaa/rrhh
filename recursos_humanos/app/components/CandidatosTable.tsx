@@ -34,9 +34,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { PlainCandidato } from "@/types/candidato"
+import { Candidato } from "@/types/candidato"
 
-export const columns: ColumnDef<PlainCandidato>[] = [
+export const columns: ColumnDef<Candidato>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -111,7 +111,7 @@ export const columns: ColumnDef<PlainCandidato>[] = [
 ]
 
 export function CandidatosTable() {
-    const [data, setData] = React.useState<PlainCandidato[]>([])
+    const [data, setData] = React.useState<Candidato[]>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})

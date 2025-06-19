@@ -1,6 +1,10 @@
 "use client"
 
 import * as React from "react"
+
+import { useEffect, useState } from "react";
+import { Empleado } from "@/types/empleado"
+
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -34,9 +38,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { PlainEmpleado } from "@/types/empleado"
 
-export const columns: ColumnDef<PlainEmpleado>[] = [
+
+export const columns: ColumnDef<Empleado>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -100,15 +104,24 @@ export const columns: ColumnDef<PlainEmpleado>[] = [
 ]
 
 export function EmpleadosTable() {
-    const [data, setData] = React.useState<PlainEmpleado[]>([])
+    const [data, setData] = React.useState<Empleado[]>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
 
-    React.useEffect(() => {
-    }, [])
+    /*
+    useEffect(() => {
     
+    async function fetchData() {
+      const res = await fetch("/api/empleados");
+      const data = await res.json();
+      setData(data);
+    }
+
+    fetchData();
+  }, []);
+  */
     const table = useReactTable({
         data,
         columns,

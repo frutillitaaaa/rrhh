@@ -1,7 +1,7 @@
 import { Document } from 'mongoose';
 import { Usuario } from "./usuario"
 
-export interface PlainCandidato extends Usuario {
+export interface Candidato extends Usuario, Document {
     curriculum?: {
         educacion: string 
         experiencia_laboral: string
@@ -9,4 +9,3 @@ export interface PlainCandidato extends Usuario {
     cargo: string
     sueldo_ideal: number
 }
-export interface Candidato extends PlainCandidato, Document {}
