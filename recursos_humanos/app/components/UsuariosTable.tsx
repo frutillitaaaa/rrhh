@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { useEffect, useState } from "react";
-import { Empleado } from "@/types/empleado"
+import { Usuario } from "@/types/usuario"
 
 import {
   ColumnDef,
@@ -17,6 +17,18 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 import { ArrowUpDown, ChevronDown, MoreHorizontal, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -30,6 +42,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Table,
   TableBody,
@@ -39,8 +52,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
-export const columns: ColumnDef<Empleado>[] = [
+export const columns: ColumnDef<Usuario>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -76,25 +94,18 @@ export const columns: ColumnDef<Empleado>[] = [
         header: "Apellido",
     },
     {
-        accessorKey: "cargo",
-        header: "Cargo",
+        accessorKey: "correo",
+        header: "Correo",
     },
     {
-        accessorKey: "sueldo_liquido",
-        header: () => <div className="text-right">Último Sueldo</div>,
-        cell: ({ row }) => {
-            const amount = parseFloat(row.getValue("sueldo_liquido"))
-            const formatted = new Intl.NumberFormat("es-CL", {
-                style: "currency",
-                currency: "CLP",
-            }).format(amount)
-            return <div className="text-right font-medium">{formatted}</div>
-        },
+        accessorKey: "telefono",
+        header: "Teléfono",
+        
     },
     {
         id: "actions",
         cell: ({ row }) => {
-            const empleado = row.original
+            const usuario = row.original
             return (
                 <DropdownMenu>
                 </DropdownMenu>
@@ -103,8 +114,8 @@ export const columns: ColumnDef<Empleado>[] = [
     },
 ]
 
-export function EmpleadosTable() {
-    const [data, setData] = React.useState<Empleado[]>([])
+export function UsuariosTable() {
+    const [data, setData] = React.useState<Usuario[]>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -143,7 +154,7 @@ export function EmpleadosTable() {
     
     return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-x-4">
         <Input
           placeholder="Buscar por Rut..."
           value={(table.getColumn("rut")?.getFilterValue() as string) ?? ""}
@@ -152,6 +163,38 @@ export function EmpleadosTable() {
           }
           className="max-w-sm"
         />
+        <Dialog>
+            <form>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <DialogTrigger asChild>
+                            <Button variant="outline">
+                            <UserPlus />
+                            </Button>
+                        </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Crear Usuario</p>
+                    </TooltipContent>
+                </Tooltip>
+                <DialogContent>
+                    <DialogHeader>
+                    <DialogTitle>Crear Usuario</DialogTitle>
+                        <p>Nombre</p>
+                        <Input placeholder="Denzel"></Input>
+                        <p>Apellido</p>
+                        <Input placeholder="Delgado"></Input>
+                        <p>Rut</p>
+                        <Input placeholder="12.345.678-9"></Input>
+                        <p>Correo</p>
+                        <Input placeholder="denzel.delgado@example.com"></Input>
+                        <p>Teléfono</p>
+                        <Input placeholder="+56912345678"></Input>
+                    </DialogHeader>
+                </DialogContent>
+            </form>
+        </Dialog>
+        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

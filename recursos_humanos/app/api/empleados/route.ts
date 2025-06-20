@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { obtenerTodosLosEmpleados, crearEmpleado } from '@/lib/services/empleadoService';
-import { PlainEmpleado } from '@/types/empleado';
+import { Empleado } from '@/types/empleado';
 
 export async function GET() {
     try {
@@ -13,7 +13,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        const data: Omit<PlainEmpleado, 'id'> = await request.json();
+        const data  = await request.json();
         const nuevoEmpleado = await crearEmpleado(data);
         return NextResponse.json(nuevoEmpleado, { status: 201 }); 
     } catch (error) {
