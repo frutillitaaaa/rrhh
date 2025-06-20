@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { obtenerTodosLosEmpleados, crearEmpleado } from '@/lib/services/empleadoService';
-import { Empleado } from '@/types/empleado';
 
 export async function GET() {
     try {

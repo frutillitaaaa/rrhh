@@ -3,34 +3,52 @@ import Empleado from '@/models/Empleado';
 import { Empleado as IEmpleado } from '@/types/empleado';
 
 export async function obtenerTodosLosEmpleados(): Promise<IEmpleado[]> {
-    await dbConnect();
-    const empleados = await Empleado.find({}).lean();
-    return JSON.parse(JSON.stringify(empleados));
+    try {
+        await dbConnect();
+        return await Empleado.find({}).lean();
+    } catch (error) {
+        console.error("Error en obtenerTodosLosEmpleados:", error);
+        throw new Error("No se pudieron obtener los empleados.");
+    }
 }
 
 export async function obtenerEmpleadoPorId(id: string): Promise<IEmpleado | null> {
-    await dbConnect();
-    const empleado = await Empleado.findById(id).lean();
-    if (!empleado) return null;
-    return JSON.parse(JSON.stringify(empleado));
+    try {
+        await dbConnect();
+        return await Empleado.findById(id).lean();
+    } catch (error) {
+        console.error(`Error en obtenerEmpleadoPorId con id ${id}:`, error);
+        throw new Error("No se pudo obtener el empleado.");
+    }
 }
 
 export async function crearEmpleado(data: IEmpleado): Promise<IEmpleado> {
-    await dbConnect();
-    const nuevoEmpleado = new Empleado(data);
-    const empleadoGuardado = await nuevoEmpleado.save();
-    return JSON.parse(JSON.stringify(empleadoGuardado));
+    try {
+        await dbConnect();
+        const nuevoEmpleado = new Empleado(data);
+        return await nuevoEmpleado.save();
+    } catch (error) {
+        console.error("Error en crearEmpleado:", error);
+        throw new Error("No se pudo crear el empleado.");
+    }
 }
 
 export async function actualizarEmpleado(id: string, data: Partial<IEmpleado>): Promise<IEmpleado | null> {
-    await dbConnect();
-    const empleadoActualizado = await Empleado.findByIdAndUpdate(id, data, { new: true }).lean();
-    if (!empleadoActualizado) return null;
-    return JSON.parse(JSON.stringify(empleadoActualizado));
+    try {
+        await dbConnect();
+        return await Empleado.findByIdAndUpdate(id, data, { new: true }).lean();
+    } catch (error) {
+        console.error(`Error en actualizarEmpleado con id ${id}:`, error);
+        throw new Error("No se pudo actualizar el empleado.");
+    }
 }
 
 export async function eliminarEmpleado(id: string): Promise<{ deletedCount?: number }> {
-    await dbConnect();
-    const resultado = await Empleado.deleteOne({ _id: id });
-    return resultado;
+    try {
+        await dbConnect();
+        return await Empleado.deleteOne({ _id: id });
+    } catch (error) {
+        console.error(`Error en eliminarEmpleado con id ${id}:`, error);
+        throw new Error("No se pudo eliminar el empleado.");
+    }
 }

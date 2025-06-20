@@ -1,26 +1,54 @@
 import dbConnect from '@/lib/mongoose';
 import Solicitud from '@/models/Solicitud';
-import { ISolicitud } from '@/models/Solicitud'; 
+import { Solicitud as ISolicitud } from '@/types/solicitud';
 
-type EstadoSolicitud = 'Pendiente' | 'Aprobada' | 'Rechazada';
-
-export async function obtenerSolicitudes(estado?: EstadoSolicitud): Promise<ISolicitud[]> {
-    await dbConnect();
-    const query = estado ? { estado } : {};
-    const solicitudes = await Solicitud.find(query).populate('id_empleado', 'nombre apellido').lean();
-    return JSON.parse(JSON.stringify(solicitudes));
+export async function obtenerTodasLasSolicitudes(): Promise<ISolicitud[]> {
+    try {
+        await dbConnect();
+        return await Solicitud.find({}).populate('id_empleado', 'nombre apellido').lean();
+    } catch (error) {
+        console.error("Error en obtenerTodasLasSolicitudes:", error);
+        throw new Error("No se pudieron obtener las solicitudes.");
+    }
 }
 
-export async function crearSolicitud(data: Omit<ISolicitud, 'estado' | 'id' | 'createdAt' | 'updatedAt'>): Promise<ISolicitud> {
-    await dbConnect();
-    const nuevaSolicitud = new Solicitud(data);
-    const solicitudGuardada = await nuevaSolicitud.save();
-    return JSON.parse(JSON.stringify(solicitudGuardada));
+export async function obtenerSolicitudPorId(id: string): Promise<ISolicitud | null> {
+    try {
+        await dbConnect();
+        return await Solicitud.findById(id).populate('id_empleado', 'nombre apellido').lean();
+    } catch (error) {
+        console.error(`Error en obtenerSolicitudPorId con id ${id}:`, error);
+        throw new Error("No se pudo obtener la solicitud.");
+    }
 }
 
-export async function actualizarEstadoSolicitud(id: string, estado: EstadoSolicitud): Promise<ISolicitud | null> {
-    await dbConnect();
-    const solicitudActualizada = await Solicitud.findByIdAndUpdate(id, { estado }, { new: true }).lean();
-    if (!solicitudActualizada) return null;
-    return JSON.parse(JSON.stringify(solicitudActualizada));
+export async function crearSolicitud(data: ISolicitud): Promise<ISolicitud> {
+    try {
+        await dbConnect();
+        const nuevaSolicitud = new Solicitud(data);
+        return await nuevaSolicitud.save();
+    } catch (error) {
+        console.error("Error en crearSolicitud:", error);
+        throw new Error("No se pudo crear la solicitud.");
+    }
+}
+
+export async function actualizarSolicitud(id: string, data: Partial<ISolicitud>): Promise<ISolicitud | null> {
+    try {
+        await dbConnect();
+        return await Solicitud.findByIdAndUpdate(id, data, { new: true }).lean();
+    } catch (error) {
+        console.error(`Error en actualizarSolicitud con id ${id}:`, error);
+        throw new Error("No se pudo actualizar la solicitud.");
+    }
+}
+
+export async function eliminarSolicitud(id: string): Promise<{ deletedCount?: number }> {
+    try {
+        await dbConnect();
+        return await Solicitud.deleteOne({ _id: id });
+    } catch (error) {
+        console.error(`Error en eliminarSolicitud con id ${id}:`, error);
+        throw new Error("No se pudo eliminar la solicitud.");
+    }
 }
