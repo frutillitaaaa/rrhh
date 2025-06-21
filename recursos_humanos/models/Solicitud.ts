@@ -7,7 +7,7 @@ const SolicitudSchema = new Schema<ISolicitud>({
         ref: 'Empleado', 
         required: true 
     },
-    nombre_empleado: { type: String, required: true },
+    nombre_empleado: { type: String, required: false },
     tipo: { 
         type: String, 
         enum: ['Vacaciones', 'Licencia', 'Otro'], 

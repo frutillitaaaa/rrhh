@@ -5,7 +5,11 @@ import { Solicitud as ISolicitud } from '@/types/solicitud';
 export async function obtenerTodasLasSolicitudes(): Promise<ISolicitud[]> {
     try {
         await dbConnect();
-        return await Solicitud.find({}).populate('id_empleado', 'nombre apellido').lean();
+        const solicitudesRaw = await Solicitud.find({}).populate('id_empleado', 'nombre apellido').lean();
+    
+        return solicitudesRaw.map((data) => ({
+            _id: data._id.toString(),
+        }))
     } catch (error) {
         console.error("Error en obtenerTodasLasSolicitudes:", error);
         throw new Error("No se pudieron obtener las solicitudes.");

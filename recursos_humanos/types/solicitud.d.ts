@@ -1,7 +1,6 @@
-import { Document } from 'mongoose';
 
 export interface Solicitud extends Document {
-    id_empleado: mongoose.Schema.Types.ObjectId;
+    id_empleado: string;
     nombre_empleado: string;
     tipo: 'Vacaciones' | 'Licencia' | 'Otro';
     fecha_inicio: string;

@@ -42,65 +42,104 @@ import {
 
 export const columns: ColumnDef<Empleado>[] = [
     {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
+      id: "select",
+      header: ({ table }) => (
+          <Checkbox
+              checked={
+                  table.getIsAllPageRowsSelected() ||
+                  (table.getIsSomePageRowsSelected() && "indeterminate")
+              }
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+              aria-label="Select all"
+          />
+      ),
+      cell: ({ row }) => (
+          <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+          />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
     {
-        accessorKey: "rut",
-        header: "Rut",
+      accessorKey: "rut",
+      header: "Rut",
+      cell: ({ row }) => <div className="capitalize">{row.getValue("rut")}</div>,
     },
     {
-        accessorKey: "nombre",
-        header: "Nombre",
+      accessorKey: "nombre",
+      header: ({ column }) => (
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+              Nombre <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+      ),
+      cell: ({ row }) => <div className="lowercase">{row.getValue("nombre")}</div>,
     },
     {
-        accessorKey: "apellido",
-        header: "Apellido",
+      accessorKey: "apellido",
+      header: ({ column }) => (
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+              Apellido <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+      ),
+      cell: ({ row }) => <div className="lowercase">{row.getValue("apellido")}</div>,
     },
     {
-        accessorKey: "cargo",
-        header: "Cargo",
+      accessorKey: "cargo",
+      header: ({ column }) => (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Cargo <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => <div className="lowercase">{row.getValue("apellido")}</div>,
+  
     },
     {
         accessorKey: "sueldo_liquido",
-        header: () => <div className="text-right">Último Sueldo</div>,
+        header: ({ column }) => (
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+            Última liquidación de sueldo<ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
         cell: ({ row }) => {
             const amount = parseFloat(row.getValue("sueldo_liquido"))
             const formatted = new Intl.NumberFormat("es-CL", {
                 style: "currency",
                 currency: "CLP",
             }).format(amount)
-            return <div className="text-right font-medium">{formatted}</div>
+            return <div className="text-center align-middle font-medium">{formatted}</div>
         },
     },
     {
-        id: "actions",
-        cell: ({ row }) => {
-            const empleado = row.original
-            return (
-                <DropdownMenu>
-                </DropdownMenu>
-            )
-        },
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const payment = row.original
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(payment.id)}
+            >
+              Ver detalles
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Editar datos</DropdownMenuItem>
+            <DropdownMenuItem>Eliminar empleado</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
     },
+  },
 ]
 
 export function EmpleadosTable() {
@@ -222,7 +261,7 @@ export function EmpleadosTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No hay resultados.
                 </TableCell>
               </TableRow>
             )}
