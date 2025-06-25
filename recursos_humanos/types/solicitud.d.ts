@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 
 export interface Solicitud extends Document {
     id_empleado: string;
@@ -8,3 +9,8 @@ export interface Solicitud extends Document {
     motivo: string;
     estado: 'Pendiente' | 'Aprobada' | 'Rechazada';
 }
+=======
+export interface Solicitud {
+    
+}
+>>>>>>> Stashed changes
