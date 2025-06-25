@@ -2,11 +2,14 @@
 
 import * as React from "react"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 import { useEffect, useState } from "react";
 import { Solicitud } from "@/types/solicitud";
 import { Empleado } from "@/types/empleado";
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 import {
@@ -23,6 +26,10 @@ import {
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 =======
 
 >>>>>>> Stashed changes
@@ -47,6 +54,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 export const columns: ColumnDef<Solicitud>[] = [
     {
@@ -279,6 +287,8 @@ export function SolicitudesTable() {
       )
 }
 =======
+=======
+>>>>>>> Stashed changes
 import { Solicitud } from "@/types/empleado"
 
 const data: Solicitud[] = [
@@ -558,4 +568,7 @@ export function SolicitudesTable() {
     </div>
   )
 }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
