@@ -6,6 +6,17 @@ import { useEffect, useState } from "react";
 import { Usuario } from "@/types/usuario"
 
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+
+import {
   ColumnDef,
   ColumnFiltersState,
   flexRender,
@@ -120,8 +131,8 @@ export function UsuariosTable() {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
+    const [cantMostrar, setCantMostrar] = React.useState<number>(10)
 
-    
     useEffect(() => {
     
     async function fetchData() {
@@ -163,6 +174,20 @@ export function UsuariosTable() {
           }
           className="max-w-sm"
         />
+        <Select value={cantMostrar?.toString()} onValueChange={(value) => setCantMostrar(Number(value))}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Mostrar ..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="1">1</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="25">25</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+              <SelectItem value="100">100</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
         <Dialog>
             <form>
                 <Tooltip>
@@ -244,7 +269,7 @@ export function UsuariosTable() {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.slice(0, cantMostrar).map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
@@ -271,6 +296,9 @@ export function UsuariosTable() {
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-5">
+        <span style={{ color: "black", fontSize: "14px" }}>Mostrando {cantMostrar} elementos</span>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-muted-foreground flex-1 text-sm">
