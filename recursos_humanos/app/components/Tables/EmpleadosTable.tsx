@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { useEffect, useState } from "react";
-import { Usuario } from "@/types/usuario"
+import { Empleado } from "@/types/empleado"
 
 import {
   Select,
@@ -28,18 +28,6 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-
 import { ArrowUpDown, ChevronDown, MoreHorizontal, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -53,7 +41,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Table,
   TableBody,
@@ -63,76 +50,110 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 
-export const columns: ColumnDef<Usuario>[] = [
+export const columns: ColumnDef<Empleado>[] = [
     {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
+      id: "select",
+      header: ({ table }) => (
+          <Checkbox
+              checked={
+                  table.getIsAllPageRowsSelected() ||
+                  (table.getIsSomePageRowsSelected() && "indeterminate")
+              }
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+              aria-label="Select all"
+          />
+      ),
+      cell: ({ row }) => (
+          <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+          />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
     {
-        accessorKey: "rut",
-        header: "Rut",
+      accessorKey: "rut",
+      header: "Rut",
+      cell: ({ row }) => <div className="capitalize">{row.getValue("rut")}</div>,
     },
     {
-        accessorKey: "nombre",
-        header: "Nombre",
+      accessorKey: "nombre",
+      header: ({ column }) => (
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+              Nombre <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+      ),
+      cell: ({ row }) => <div className="lowercase">{row.getValue("nombre")}</div>,
     },
     {
-        accessorKey: "apellido",
-        header: "Apellido",
+      accessorKey: "apellido",
+      header: ({ column }) => (
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+              Apellido <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+      ),
+      cell: ({ row }) => <div className="lowercase">{row.getValue("apellido")}</div>,
     },
     {
-        accessorKey: "correo",
-        header: "Correo",
+      accessorKey: "cargo",
+      header: ({ column }) => (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Cargo <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => <div className="lowercase">{row.getValue("cargo")}</div>,
+  
     },
     {
-        accessorKey: "telefono",
-        header: "Teléfono",
-        
+      accessorKey: "departamento",
+      header: ({ column }) => (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Departamento <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => <div className="lowercase">{row.getValue("departamento")}</div>,
     },
     {
-        id: "actions",
-        cell: ({ row }) => {
-            const usuario = row.original
-            return (
-                <DropdownMenu>
-                </DropdownMenu>
-            )
-        },
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const empleado = row.original
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(empleado.id)}
+            >
+              Ver detalles
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Editar datos</DropdownMenuItem>
+            <DropdownMenuItem>Eliminar empleado</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
     },
+  },
 ]
 
-export function UsuariosTable() {
-    const [data, setData] = React.useState<Usuario[]>([])
+export function EmpleadosTable() {
+    const [data, setData] = React.useState<Empleado[]>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
-    const [cantMostrar, setCantMostrar] = React.useState<number>(10)
-
+    const [cantMostrar, setCantMostrar] = React.useState<number>(10);
+    
     useEffect(() => {
     
     async function fetchData() {
@@ -156,16 +177,16 @@ export function UsuariosTable() {
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
-            sorting,
-            columnFilters,
-            columnVisibility,
-            rowSelection,
+          sorting,
+          columnFilters,
+          columnVisibility,
+          rowSelection,
         },
     })
     
     return (
     <div className="w-full">
-      <div className="flex items-center py-4 gap-x-4">
+      <div className="flex items-center space-x-10 py-4">
         <Input
           placeholder="Buscar por Rut..."
           value={(table.getColumn("rut")?.getFilterValue() as string) ?? ""}
@@ -174,56 +195,10 @@ export function UsuariosTable() {
           }
           className="max-w-sm"
         />
-        <Select value={cantMostrar?.toString()} onValueChange={(value) => setCantMostrar(Number(value))}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Mostrar ..." />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="1">1</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Dialog>
-            <form>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <DialogTrigger asChild>
-                            <Button variant="outline">
-                            <UserPlus />
-                            </Button>
-                        </DialogTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Crear Usuario</p>
-                    </TooltipContent>
-                </Tooltip>
-                <DialogContent>
-                    <DialogHeader>
-                    <DialogTitle>Crear Usuario</DialogTitle>
-                        <p>Nombre</p>
-                        <Input placeholder="Denzel"></Input>
-                        <p>Apellido</p>
-                        <Input placeholder="Delgado"></Input>
-                        <p>Rut</p>
-                        <Input placeholder="12.345.678-9"></Input>
-                        <p>Correo</p>
-                        <Input placeholder="denzel.delgado@example.com"></Input>
-                        <p>Teléfono</p>
-                        <Input placeholder="+56912345678"></Input>
-                    </DialogHeader>
-                </DialogContent>
-            </form>
-        </Dialog>
-        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+              Columnas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -290,7 +265,7 @@ export function UsuariosTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No hay resultados.
                 </TableCell>
               </TableRow>
             )}
@@ -298,12 +273,27 @@ export function UsuariosTable() {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-5">
-        <span style={{ color: "black", fontSize: "14px" }}>Mostrando {cantMostrar} elementos</span>
+        <span className="text-black text-[14px]">Mostrar: </span>
+        <Select value={cantMostrar?.toString()} onValueChange={(value) => setCantMostrar(Number(value))}>
+          <SelectTrigger className="w-[64px]">
+            <SelectValue placeholder="Mostrar ..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="1">1</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="25">25</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+              <SelectItem value="100">100</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} de{" "}
+          {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
         </div>
         <div className="space-x-2">
           <Button

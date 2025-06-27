@@ -24,7 +24,6 @@ const EmpleadoSchema = new Schema<IEmpleado>({
     
     cargo: { type: String, required: true },
     sueldo_liquido: { type: Number, required: true },
-    sueldo_bruto: { type: Number, required: true },
     estado: { type: Number, required: true },
     departamento: { type: String, required: true },
     fecha_contratacion: { type: String, required: true },

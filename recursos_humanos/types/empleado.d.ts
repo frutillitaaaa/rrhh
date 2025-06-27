@@ -16,12 +16,11 @@ export interface Historial_sueldos {
 
 export interface Empleado extends Usuario, Document {
     cargo: string
-    sueldo_liquido: number
-    sueldo_bruto: number
-    estado: number
+    sueldo_liquido?: number
+    estado?: number
     departamento: string
     fecha_contratacion: string
-    dias_vacaciones: number
+    dias_vacaciones?: number
     historial_sueldos?: Historial_sueldos[]
     historial_cargos?: Historial_cargos[]
 }

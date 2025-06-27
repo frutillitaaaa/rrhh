@@ -271,7 +271,7 @@ export function SolicitudesTable() {
             </Table>
           </div>
           <div className="flex items-center justify-end space-x-2 py-5">
-            <span style={{ color: "black", fontSize: "14px" }}>Mostrando {cantMostrar} elementos</span>
+            <span className="text-black text-[14px]">Mostrando {cantMostrar} elementos</span>
           </div>
           <div className="flex items-center justify-end space-x-2 py-4">
             <div className="text-muted-foreground flex-1 text-sm">

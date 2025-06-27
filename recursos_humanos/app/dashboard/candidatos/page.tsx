@@ -1,4 +1,4 @@
-import { CandidatosTable } from "@/app/components/CandidatosTable";
+import { CandidatosTable } from "@/app/components/Tables/CandidatosTable";
 
 export default function Candidatos () {
     return (

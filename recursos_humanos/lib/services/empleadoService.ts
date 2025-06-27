@@ -26,6 +26,7 @@ export async function crearEmpleado(data: IEmpleado): Promise<IEmpleado> {
     try {
         await dbConnect();
         const nuevoEmpleado = new Empleado(data);
+        console.log(nuevoEmpleado);
         return await nuevoEmpleado.save();
     } catch (error) {
         console.error("Error en crearEmpleado:", error);
@@ -39,6 +40,7 @@ export async function actualizarEmpleado(id: string, data: Partial<IEmpleado>): 
         return await Empleado.findByIdAndUpdate(id, data, { new: true }).lean();
     } catch (error) {
         console.error(`Error en actualizarEmpleado con id ${id}:`, error);
+        throw error;
         throw new Error("No se pudo actualizar el empleado.");
     }
 }
