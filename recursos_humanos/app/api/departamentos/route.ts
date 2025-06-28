@@ -12,11 +12,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        const { area, seccion } = await request.json();
-        if (!area || !seccion) {
-            return NextResponse.json({ message: 'Area y seccion son requeridos' }, { status: 400 });
+        const { nombreDepartamento, cargos } = await request.json();
+        if (!nombreDepartamento || !cargos) {
+            return NextResponse.json({ message: 'Nombre departamento y al menos un cargo son requeridos' }, { status: 400 });
         }
-        await agregarDepartamento({ area, seccion });
+        await agregarDepartamento({ nombreDepartamento, cargos });
         return NextResponse.json({ message: 'Departamento agregado con éxito' }, { status: 201 });
     } catch (error) {
         return NextResponse.json({ message: 'Error al agregar departamento', error: (error as Error).message }, { status: 500 });

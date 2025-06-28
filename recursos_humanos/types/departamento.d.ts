@@ -1,4 +1,4 @@
 export interface Departamento {
-    area: string
-    seccion: string
+    nombreDepartamento: string
+    cargos: string[]
 }

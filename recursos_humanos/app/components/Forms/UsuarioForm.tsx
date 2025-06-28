@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { DateSelector } from "../../../components/DateSelector";
 import { CargosSelector } from "../Selector/CargosSelector";
+import { DepartamentosSelector } from "../Selector/DepartamentosSelector";
 
 const formSchema = z.object({
     nombre: z.string().min(1, {
@@ -199,19 +200,19 @@ export function UsuarioForm() {
 
         {tipo === "candidato" && (
             <div>
-              {/* <FormField 
+              <FormField 
                 control={form.control}
                 name="cargo"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel></FormLabel>
+                        <FormLabel>Cargo al que postula</FormLabel>
                         <FormControl>
                           <CargosSelector/>
                         </FormControl>
                     </FormItem>
                 )}
             />
-            */}
+            
                 
             <FormField 
                 control={form.control}
@@ -230,12 +231,12 @@ export function UsuarioForm() {
 
         {tipo === "empleado" && (
             <div>
-              {/* <FormField 
+              <FormField 
                     control={form.control}
                     name="cargo"
                     render={({ field }) => (
                     <FormItem>
-                        <FormLabel></FormLabel>
+                        <FormLabel>Cargo</FormLabel>
                         <FormControl>
                           <CargosSelector/>
                         </FormControl>
@@ -248,16 +249,14 @@ export function UsuarioForm() {
                     name="departamento"
                     render={({ field }) => (
                     <FormItem>
-                        <FormLabel></FormLabel>
+                        <FormLabel>Departamento</FormLabel>
                         <FormControl>
-
+                          <DepartamentosSelector/>
                         </FormControl>
                     </FormItem>
                 )}
                 />
-                */}
                 
-                {/*
                 <FormField 
                     control={form.control}
                     name="fecha_contratacion"
@@ -270,7 +269,7 @@ export function UsuarioForm() {
                     </FormItem>
                 )}
                 />
-                */}
+                
             </div>
             
         )}

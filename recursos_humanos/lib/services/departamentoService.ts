@@ -7,49 +7,59 @@ export async function obtenerTodosLosDepartamentos(): Promise<Departamento[]> {
     try {
         const data = await redis.hgetall(DEPARTAMENTOS_KEY);
         if (!data) return [];
-        return Object.entries(data).map(([area, seccion]) => ({ area, seccion: seccion as string }));
+        return Object.entries(data).map(([nombreDepartamento, cargos]) => ({
+            nombreDepartamento,
+            cargos: JSON.parse(cargos as string) as string[]
+        }));
     } catch (error) {
         console.error("Error en obtenerTodosLosDepartamentos (Redis):", error);
         throw new Error("No se pudieron obtener los departamentos.");
     }
 }
 
-export async function obtenerDepartamentoPorArea(area: string): Promise<Departamento | null> {
+export async function obtenerDepartamentoPorNombre(nombreDepartamento: string): Promise<Departamento | null> {
     try {
-        const seccion = await redis.hget(DEPARTAMENTOS_KEY, area);
-        if (!seccion) return null;
-        return { area, seccion: seccion as string };
+        const secciones = await redis.hget(DEPARTAMENTOS_KEY, nombreDepartamento);
+        if (!secciones) return null;
+        return {
+            nombreDepartamento,
+            cargos: JSON.parse(secciones as string) as string[]
+        };
     } catch (error) {
-        console.error(`Error en obtenerDepartamentoPorArea con area ${area} (Redis):`, error);
+        console.error(`Error en obtenerDepartamentoPorNombre con nombre ${nombreDepartamento} (Redis):`, error);
         throw new Error("No se pudo obtener el departamento.");
     }
 }
 
 export async function agregarDepartamento(departamento: Departamento): Promise<void> {
     try {
-        await redis.hset(DEPARTAMENTOS_KEY, { [departamento.area]: departamento.seccion });
+        await redis.hset(DEPARTAMENTOS_KEY, {
+            [departamento.nombreDepartamento]: JSON.stringify(departamento.cargos)
+        });
     } catch (error) {
         console.error("Error en agregarDepartamento (Redis):", error);
         throw new Error("No se pudo agregar el departamento.");
     }
 }
 
-export async function actualizarDepartamento(area: string, data: Partial<Departamento>): Promise<void> {
+export async function actualizarDepartamento(nombreDepartamento: string, data: Partial<Departamento>): Promise<void> {
     try {
-        if (data.seccion) {
-            await redis.hset(DEPARTAMENTOS_KEY, { [area]: data.seccion });
+        if (data.cargos) {
+            await redis.hset(DEPARTAMENTOS_KEY, {
+                [nombreDepartamento]: JSON.stringify(data.cargos)
+            });
         }
     } catch (error) {
-        console.error(`Error en actualizarDepartamento con area ${area} (Redis):`, error);
+        console.error(`Error en actualizarDepartamento con nombre ${nombreDepartamento} (Redis):`, error);
         throw new Error("No se pudo actualizar el departamento.");
     }
 }
 
-export async function eliminarDepartamento(area: string): Promise<void> {
+export async function eliminarDepartamento(nombreDepartamento: string): Promise<void> {
     try {
-        await redis.hdel(DEPARTAMENTOS_KEY, area);
+        await redis.hdel(DEPARTAMENTOS_KEY, nombreDepartamento);
     } catch (error) {
-        console.error(`Error en eliminarDepartamento con area ${area} (Redis):`, error);
+        console.error(`Error en eliminarDepartamento con nombre ${nombreDepartamento} (Redis):`, error);
         throw new Error("No se pudo eliminar el departamento.");
     }
 }

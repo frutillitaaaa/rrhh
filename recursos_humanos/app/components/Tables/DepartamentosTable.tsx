@@ -40,9 +40,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Cargo } from "@/types/cargo"
+import { Departamento } from "@/types/departamento";
 
-export const columns: ColumnDef<Cargo>[] = [
+export const columns: ColumnDef<Departamento>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -66,65 +66,43 @@ export const columns: ColumnDef<Cargo>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "cargo",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Cargo
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div>{row.getValue("cargo")}</div>,
+    accessorKey: "nombreDepartamento",
+    header: "Departamento",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("nombreDepartamento")}</div>
+    ),
   },
-  {
-    accessorKey: "sueldo_base",
-    header: () => <div className="text-right">Sueldo base</div>,
-    cell: ({ row }) => {
-      const sueldo_base = parseFloat(row.getValue("sueldo_base"))
-
-      const formatted = new Intl.NumberFormat("es-CL", {
-        style: "currency",
-        currency: "CLP",
-      }).format(sueldo_base)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    },
-  },
-  {
-    id: "acciones",
-    header: () => <div className="text-right">Acciones</div>,
+ {
+    id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const cargo = row.original
-
-      function editar(cargo: string): void {
-        throw new Error("Function not implemented.");
-      }
-
-      function borrar(cargo: string): void {
-        throw new Error("Function not implemented.");
-      }
-
+      const departamento = row.original
       return (
-        <div>
-            <Button onClick={() => editar(cargo.cargo)}>
-                <SquarePen/>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
             </Button>
-            <Button onClick={() => borrar(cargo.cargo)}>
-                <Trash2/>
-            </Button>
-        </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+            >
+              Ver detalles
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Editar datos</DropdownMenuItem>
+            <DropdownMenuItem>Eliminar empleado</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )
     },
   },
 ]
 
-export function CargosTable() {
-    const [data, setData] = React.useState<Cargo[]>([])
+export function DepartamentosTable() {
+    const [data, setData] = React.useState<Departamento[]>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] =
@@ -134,7 +112,7 @@ export function CargosTable() {
     useEffect(() => {
         
         async function fetchData() {
-          const res = await fetch("/api/cargos");
+          const res = await fetch("/api/departamentos");
           const data = await res.json();
           setData(data);
         }
@@ -164,13 +142,13 @@ export function CargosTable() {
 
   return (
     <div className="w-full">
-        <h1>Cargos</h1>
+        <h1>Departamentos</h1>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Buscar cargos ..."
-          value={(table.getColumn("cargo")?.getFilterValue() as string) ?? ""}
+          placeholder="Buscar Departamento..."
+          value={(table.getColumn("nombreDepartamento")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("cargo")?.setFilterValue(event.target.value)
+            table.getColumn("nombreDepartamento")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

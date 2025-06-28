@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server';
-import { obtenerDepartamentoPorArea, actualizarDepartamento, eliminarDepartamento } from '@/lib/services/departamentoService';
+import { obtenerDepartamentoPorNombre, actualizarDepartamento, eliminarDepartamento } from '@/lib/services/departamentoService';
 
 interface Params {
-    area: string;
+    nombreDepartamento: string;
 }
 
 export async function GET(request: Request, { params }: { params: Params }) {
     try {
-        const area = params.area;
-        console.log(`Buscando departamento con el área: "${area}"`);
-        const departamento = await obtenerDepartamentoPorArea(area);
+        const nombreDepartamento = params.nombreDepartamento;
+        console.log(`Buscando departamento con el área: "${nombreDepartamento}"`);
+        const departamento = await obtenerDepartamentoPorNombre(nombreDepartamento);
         
         if (!departamento) {
-            console.log(`No se encontró el departamento para el área: "${area}"`);
+            console.log(`No se encontró el departamento para el área: "${nombreDepartamento}"`);
             return NextResponse.json({ message: 'Departamento no encontrado' }, { status: 404 });
         }
 
@@ -25,9 +25,9 @@ export async function GET(request: Request, { params }: { params: Params }) {
 export async function PUT(request: Request, { params }: { params: Params }) {
     try {
         const data = await request.json();
-        const area = params.area;
+        const departamento = params.nombreDepartamento;
         
-        await actualizarDepartamento(area, data);
+        await actualizarDepartamento(departamento, data);
         
         return NextResponse.json({ message: 'Departamento actualizado con éxito' });
     } catch (error) {
@@ -37,8 +37,8 @@ export async function PUT(request: Request, { params }: { params: Params }) {
 
 export async function DELETE(request: Request, { params }: { params: Params }) {
     try {
-        const area = params.area;
-        await eliminarDepartamento(area);
+        const nombreDepartamento = params.nombreDepartamento;
+        await eliminarDepartamento(nombreDepartamento);
         return new NextResponse(null, { status: 204 });
     } catch (error) {
         return NextResponse.json({ message: 'Error al eliminar el departamento', error: (error as Error).message }, { status: 500 });
