@@ -152,6 +152,7 @@ export function CandidatosTable() {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
     const [cantMostrar, setCantMostrar] = React.useState<number>(10);
+    const [isContratando, setIsContratando] = React.useState(false);
 
     useEffect(() => {
         
@@ -163,6 +164,44 @@ export function CandidatosTable() {
     
         fetchData();
       }, []);
+
+    const handleContratar = async () => {
+        const selectedRows = table.getFilteredSelectedRowModel().rows;
+        if (selectedRows.length === 0) {
+            alert("Debe seleccionar al menos un candidato para contratar");
+            return;
+        }
+
+        setIsContratando(true);
+        try {
+            const candidatosIds = selectedRows.map(row => row.original._id);
+            
+            const response = await fetch("/api/candidatos/contratar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ candidatosIds }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+                const res = await fetch("/api/candidatos");
+                const newData = await res.json();
+                setData(newData);
+                table.toggleAllPageRowsSelected(false);
+            } else {
+                alert(result.message || "Error al contratar candidatos");
+            }
+        } catch (error) {
+            alert("Error al procesar la contratación");
+            console.error("Error:", error);
+        } finally {
+            setIsContratando(false);
+        }
+    };
 
     const table = useReactTable({
         data,
@@ -208,6 +247,14 @@ export function CandidatosTable() {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
+                <Button
+                    onClick={handleContratar}
+                    disabled={table.getFilteredSelectedRowModel().rows.length === 0 || isContratando}
+                    className="ml-auto mr-2"
+                    variant="default"
+                >
+                    {isContratando ? "Contratando..." : "Contratar"}
+                </Button>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
