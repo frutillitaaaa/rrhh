@@ -53,7 +53,7 @@ interface UsuarioFormProps {
   onClose:() => void;
 };
 
-export function UsuarioForm({ onClose}: UsuarioFormProps) {
+export function UsuarioForm({ onClose }: UsuarioFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

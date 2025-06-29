@@ -142,7 +142,6 @@ export function DepartamentosTable() {
 
   return (
     <div className="w-full">
-        <h1>Departamentos</h1>
       <div className="flex items-center py-4">
         <Input
           placeholder="Buscar Departamento..."
