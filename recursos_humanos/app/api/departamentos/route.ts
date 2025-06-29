@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { obtenerTodosLosDepartamentos, agregarDepartamento } from '@/lib/services/departamentoService';
+import { Departamento } from '@/types/departamento';
 
 export async function GET() {
     try {
@@ -12,13 +13,25 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        const { nombreDepartamento, cargos } = await request.json();
-        if (!nombreDepartamento || !cargos) {
-            return NextResponse.json({ message: 'Nombre departamento y al menos un cargo son requeridos' }, { status: 400 });
+        const body = await request.json();
+        const { nombreDepartamento, cargos } = body as Departamento;
+
+        if (!nombreDepartamento || !Array.isArray(cargos) || cargos.length === 0) {
+            return NextResponse.json(
+                { message: 'Nombre del departamento y al menos un cargo son requeridos' },
+                { status: 400 }
+            );
         }
+
+        // Guardar en Redis
         await agregarDepartamento({ nombreDepartamento, cargos });
+
         return NextResponse.json({ message: 'Departamento agregado con éxito' }, { status: 201 });
     } catch (error) {
-        return NextResponse.json({ message: 'Error al agregar departamento', error: (error as Error).message }, { status: 500 });
+        console.error("POST Error:", error);
+        return NextResponse.json(
+            { message: 'Error al agregar departamento', error: (error as Error).message },
+            { status: 500 }
+        );
     }
 }

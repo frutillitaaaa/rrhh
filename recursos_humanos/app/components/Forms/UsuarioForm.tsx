@@ -213,15 +213,14 @@ export function UsuarioForm() {
                 )}
             />
             
-                
             <FormField 
                 control={form.control}
                 name="sueldo_ideal"
                 render={({ field }) => (
                 <FormItem>
-                  <FormLabel></FormLabel>
+                  <FormLabel>Sueldo ideal</FormLabel>
                   <FormControl>
-                      
+                    <Input placeholder="1.800.000" {...field} />
                   </FormControl>
                 </FormItem>
                 )}
@@ -264,7 +263,7 @@ export function UsuarioForm() {
                     <FormItem>
                         <FormLabel></FormLabel>
                         <FormControl>
-                            <DateSelector label="Fecha contratacion"/>
+                            <DateSelector label="Fecha contratacion" value = {field.value} onChange={field.onChange}/>
                         </FormControl>
                     </FormItem>
                 )}

@@ -14,12 +14,15 @@ import {
 
 type DateSelectorProps = {
   label: string;
+  value?: string;
+  onChange: (value: string) => void;
 };
 
 
-export function DateSelector({label}: DateSelectorProps) {
+export function DateSelector({label, value, onChange}: DateSelectorProps) {
   const [open, setOpen] = React.useState(false)
-  const [date, setDate] = React.useState<Date | undefined>(undefined)
+
+  const parsedDate = value ? new Date(value) : undefined
 
   return (
     <div className="flex flex-col gap-3">
@@ -33,18 +36,21 @@ export function DateSelector({label}: DateSelectorProps) {
             id="date"
             className="w-48 justify-between font-normal"
           >
-            {date ? date.toLocaleDateString() : "Seleccionar fecha"}
+            {parsedDate ? parsedDate.toLocaleDateString() : "Seleccionar fecha"}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
             mode="single"
-            selected={date}
+            selected={parsedDate}
             captionLayout="dropdown"
             onSelect={(date) => {
-              setDate(date)
-              setOpen(false)
+              if(date) {
+                const isoString = date?.toISOString().split("T")[0];
+                onChange(isoString);
+              }
+              setOpen(false);
             }}
           />
         </PopoverContent>

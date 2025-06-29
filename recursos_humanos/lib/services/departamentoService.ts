@@ -6,11 +6,12 @@ const DEPARTAMENTOS_KEY = 'departamentos';
 export async function obtenerTodosLosDepartamentos(): Promise<Departamento[]> {
     try {
         const data = await redis.hgetall(DEPARTAMENTOS_KEY);
+        console.log("Valor obtenido desde Redis:", data);
         if (!data) return [];
         return Object.entries(data).map(([nombreDepartamento, cargos]) => ({
             nombreDepartamento,
-            cargos: JSON.parse(cargos as string) as string[]
-        }));
+            cargos: typeof cargos === 'string' ? JSON.parse(cargos) : cargos
+}));
     } catch (error) {
         console.error("Error en obtenerTodosLosDepartamentos (Redis):", error);
         throw new Error("No se pudieron obtener los departamentos.");
@@ -41,6 +42,7 @@ export async function agregarDepartamento(departamento: Departamento): Promise<v
         throw new Error("No se pudo agregar el departamento.");
     }
 }
+
 
 export async function actualizarDepartamento(nombreDepartamento: string, data: Partial<Departamento>): Promise<void> {
     try {
