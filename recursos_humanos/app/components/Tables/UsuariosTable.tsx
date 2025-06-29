@@ -127,6 +127,7 @@ export const columns: ColumnDef<Usuario>[] = [
 ]
 
 export function UsuariosTable() {
+    const [open, setOpen] = useState(false)
     const [data, setData] = React.useState<Usuario[]>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -191,29 +192,28 @@ export function UsuariosTable() {
           }
           className="max-w-sm"
         />
-        <Dialog>
-            <form>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <DialogTrigger asChild>
-                            <Button variant="outline">
-                            <UserPlus />
-                            </Button>
-                        </DialogTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Crear Usuario</p>
-                    </TooltipContent>
-                </Tooltip>
-                <DialogContent className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl">
-                    <DialogHeader>
-                    <DialogTitle>Crear Usuario</DialogTitle>
-                    <ScrollArea className="max-h-[70vh] p-4">
-                      <UsuarioForm></UsuarioForm>
-                    </ScrollArea>
-                    </DialogHeader>
-                </DialogContent>
-            </form>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Tooltip>
+              <TooltipTrigger asChild>
+                  <DialogTrigger asChild>
+                      <Button variant="outline">
+                      <UserPlus />
+                      </Button>
+                  </DialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>
+                  <p>Crear Usuario</p>
+              </TooltipContent>
+          </Tooltip>
+          <DialogContent className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl">
+              <DialogHeader>
+              <DialogTitle>Crear Usuario</DialogTitle>
+              <ScrollArea className="max-h-[70vh] p-4">
+                <UsuarioForm onClose = {() => setOpen(false)}/>
+              </ScrollArea>
+              </DialogHeader>
+          </DialogContent>
+          
         </Dialog>
         
         <DropdownMenu>

@@ -46,11 +46,14 @@ const formSchema = z.object({
     cargo: z.string().optional(),
     departamento: z.string().optional(),
     fecha_contratacion: z.string().optional(),
-    sueldo_ideal: z.number().optional()
+    sueldo_ideal: z.number().optional(),
 })
 
-export function UsuarioForm() {
+interface UsuarioFormProps {
+  onClose:() => void;
+};
 
+export function UsuarioForm({ onClose}: UsuarioFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -94,7 +97,7 @@ export function UsuarioForm() {
         console.error("Error al enviar datos: ", e );
       }
     }
-    
+    onClose();
   
   }
   return (
@@ -204,55 +207,55 @@ export function UsuarioForm() {
                 control={form.control}
                 name="cargo"
                 render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Cargo al que postula</FormLabel>
-                        <FormControl>
-                          <CargosSelector/>
-                        </FormControl>
-                    </FormItem>
+                  <FormItem>
+                      <FormLabel>Cargo al que postula</FormLabel>
+                      <FormControl>
+                        <CargosSelector value={field.value || ""} onChange={field.onChange}/>
+                      </FormControl>
+                  </FormItem>
                 )}
             />
             
-            <FormField 
-                control={form.control}
-                name="sueldo_ideal"
-                render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sueldo ideal</FormLabel>
-                  <FormControl>
-                    <Input placeholder="1.800.000" {...field} />
-                  </FormControl>
-                </FormItem>
-                )}
-            />
+              <FormField 
+                  control={form.control}
+                  name="sueldo_ideal"
+                  render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sueldo ideal</FormLabel>
+                    <FormControl>
+                      <Input placeholder="1.800.000" type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                    </FormControl>
+                  </FormItem>
+                  )}
+              />
             </div>
         )}
 
         {tipo === "empleado" && (
             <div>
               <FormField 
-                    control={form.control}
-                    name="cargo"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Cargo</FormLabel>
-                        <FormControl>
-                          <CargosSelector/>
-                        </FormControl>
-                    </FormItem>
+                control={form.control}
+                name="cargo"
+                render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Cargo</FormLabel>
+                    <FormControl>
+                      <CargosSelector value = {field.value || ""} onChange={field.onChange}/>
+                    </FormControl>
+                </FormItem>
                 )}
                 />
 
                 <FormField 
-                    control={form.control}
-                    name="departamento"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Departamento</FormLabel>
-                        <FormControl>
-                          <DepartamentosSelector/>
-                        </FormControl>
-                    </FormItem>
+                  control={form.control}
+                  name="departamento"
+                  render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Departamento</FormLabel>
+                    <FormControl>
+                      <DepartamentosSelector value = {field.value || ""} onChange={field.onChange}/>
+                    </FormControl>
+                  </FormItem>
                 )}
                 />
                 
@@ -267,13 +270,13 @@ export function UsuarioForm() {
                         </FormControl>
                     </FormItem>
                 )}
-                />
-                
+                />  
             </div>
             
         )}
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit" >Submit</Button>
+        <Button type="button" onClick={onClose}>Cancelar</Button>
       </form>
     </Form>
   )

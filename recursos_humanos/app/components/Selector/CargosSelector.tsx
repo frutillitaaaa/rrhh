@@ -16,7 +16,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-export function CargosSelector() {
+type CargosSelectorProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+export function CargosSelector({value, onChange}: CargosSelectorProps) {
   const [data, setData] = React.useState<Cargo[]>([])
   useEffect(() => {
       
@@ -30,14 +35,14 @@ export function CargosSelector() {
     }, []);
 
   return (
-    <Select>
+    <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="w-[280px]">
         <SelectValue placeholder="Seleccionar cargo" />
       </SelectTrigger>
       <SelectContent>
         {data.map((cargo) => {
           return (
-            <SelectItem value={cargo.cargo}>{cargo.cargo}</SelectItem>
+            <SelectItem key={cargo.cargo} value={cargo.cargo}>{cargo.cargo}</SelectItem>
           )
         })}
       </SelectContent>

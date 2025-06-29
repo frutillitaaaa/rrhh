@@ -17,7 +17,7 @@ export interface Historial_sueldos {
 export interface Empleado extends Usuario, Document {
     cargo: string
     sueldo_liquido?: number
-    estado?: number
+    estado?: string
     departamento: string
     fecha_contratacion: string
     dias_vacaciones?: number

@@ -23,11 +23,11 @@ const EmpleadoSchema = new Schema<IEmpleado>({
     telefono: { type: String, required: true },
     
     cargo: { type: String, required: true },
-    sueldo_liquido: { type: Number, required: true },
-    estado: { type: Number, required: true },
+    sueldo_liquido: { type: Number, default: null },
+    estado: { type: String, default: "Trabajando" },
     departamento: { type: String, required: true },
     fecha_contratacion: { type: String, required: true },
-    dias_vacaciones: { type: Number, required: true },
+    dias_vacaciones: { type: Number, default: null },
     historial_sueldos: [HistorialSueldosSchema],
     historial_cargos: [HistorialCargosSchema],
 }, {
