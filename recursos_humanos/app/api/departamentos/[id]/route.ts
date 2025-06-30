@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server';
 import { obtenerDepartamentoPorNombre, actualizarDepartamento, eliminarDepartamento } from '@/lib/services/departamentoService';
 
 interface Params {
-    nombreDepartamento: string;
+    id: string;
 }
 
 export async function GET(request: Request, { params }: { params: Params }) {
     try {
-        const nombreDepartamento = params.nombreDepartamento;
+        const nombreDepartamento = params.id;
         console.log(`Buscando departamento con el área: "${nombreDepartamento}"`);
         const departamento = await obtenerDepartamentoPorNombre(nombreDepartamento);
         
@@ -24,11 +24,12 @@ export async function GET(request: Request, { params }: { params: Params }) {
 
 export async function PUT(request: Request, { params }: { params: Params }) {
     try {
+        const departamento = params.id;
+        if (!departamento || departamento === "undefined" || departamento.trim() === "") {
+            return NextResponse.json({ message: 'El nombre del departamento en la URL es inválido. No se puede actualizar.' }, { status: 400 });
+        }
         const data = await request.json();
-        const departamento = params.nombreDepartamento;
-        
         await actualizarDepartamento(departamento, data);
-        
         return NextResponse.json({ message: 'Departamento actualizado con éxito' });
     } catch (error) {
         return NextResponse.json({ message: 'Error al actualizar el departamento', error: (error as Error).message }, { status: 400 });
@@ -37,7 +38,7 @@ export async function PUT(request: Request, { params }: { params: Params }) {
 
 export async function DELETE(request: Request, { params }: { params: Params }) {
     try {
-        const nombreDepartamento = params.nombreDepartamento;
+        const nombreDepartamento = params.id;
         await eliminarDepartamento(nombreDepartamento);
         return new NextResponse(null, { status: 204 });
     } catch (error) {

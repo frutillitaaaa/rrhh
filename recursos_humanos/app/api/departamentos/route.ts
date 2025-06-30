@@ -15,17 +15,13 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         const { nombreDepartamento, cargos } = body as Departamento;
-
-        if (!nombreDepartamento || !Array.isArray(cargos) || cargos.length === 0) {
+        if (!nombreDepartamento || nombreDepartamento === "undefined" || nombreDepartamento.trim() === "" || !Array.isArray(cargos) || cargos.length === 0) {
             return NextResponse.json(
-                { message: 'Nombre del departamento y al menos un cargo son requeridos' },
+                { message: 'Nombre del departamento válido y al menos un cargo son requeridos' },
                 { status: 400 }
             );
         }
-
-        // Guardar en Redis
         await agregarDepartamento({ nombreDepartamento, cargos });
-
         return NextResponse.json({ message: 'Departamento agregado con éxito' }, { status: 201 });
     } catch (error) {
         console.error("POST Error:", error);

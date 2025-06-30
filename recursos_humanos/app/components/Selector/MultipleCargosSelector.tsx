@@ -16,7 +16,6 @@ interface MultipleCargosSelectorProps  {
 
 export function MultipleCargosSelector({value, onChange}: MultipleCargosSelectorProps) {
   const [options, setOptions] = React.useState<Option[]>([])
-  const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
     
   useEffect(() => {
       async function fetchData() {
@@ -49,7 +48,6 @@ export function MultipleCargosSelector({value, onChange}: MultipleCargosSelector
         value={value}
         onChange={onChange}
         options={options}
-        defaultOptions={selectedOptions}
         triggerSearchOnFocus={true}
         placeholder="Seleccione uno o varios cargos..."
         emptyIndicator={

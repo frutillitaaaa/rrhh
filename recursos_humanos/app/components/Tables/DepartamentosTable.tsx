@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { useEffect, useState } from "react";
 
-import { SquarePen, Trash2 } from 'lucide-react';
+import { SquarePen, Trash2, Eye, Edit } from 'lucide-react';
 
 import {
   ColumnDef,
@@ -46,101 +46,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DepartamentoForm } from "../Forms/DepartamentoForm";
 
-export const columns: ColumnDef<Departamento>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "nombreDepartamento",
-    header: "Departamento",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("nombreDepartamento")}</div>
-    ),
-  },
-  {
-    accessorKey: "verDetalles",
-    header: "Ver detalles",
-    cell: ({ row }) => {
-      const departamento = row.original;
-      const [open, setOpen] = React.useState(false);
-      return (
-        <>
-          <Button variant="outline" onClick={() => setOpen(true)}>
-            Ver detalles
-          </Button>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Detalles del Departamento</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Nombre</label>
-                  <p className="text-lg font-semibold">{departamento.nombreDepartamento}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Cargos</label>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {departamento.cargos && departamento.cargos.length > 0 ? (
-                      departamento.cargos.map((cargo: any, idx: number) => {
-                        let cargoText = '';
-                        if (typeof cargo === 'string') cargoText = cargo;
-                        else if (cargo && typeof cargo === 'object') cargoText = cargo.label || cargo.value || '';
-                        return (
-                          <span key={idx} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium">
-                            {cargoText}
-                          </span>
-                        );
-                      })
-                    ) : (
-                      <span className="text-gray-400">Sin cargos</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "editarDepartamento",
-    header: "Editar departamento",
-    cell: ({ row }) => {
-      // Aquí puedes conectar el botón con el formulario de edición existente
-      return (
-        <Button variant="secondary">
-          Editar departamento
-        </Button>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
-  },
-]
-
 export function DepartamentosTable() {
   const [open, setOpen] = useState(false)
   const [data, setData] = React.useState<Departamento[]>([])
@@ -149,17 +54,144 @@ export function DepartamentosTable() {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-    useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/departamentos");
+      const data = await res.json();
+      setData(data);
+    } catch (error) {
+      console.error("Error al obtener departamentos:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const columns: ColumnDef<Departamento>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "nombreDepartamento",
+      header: "Departamento",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("nombreDepartamento")}</div>
+      ),
+    },
+    {
+      id: "verDetalles",
+      header: "",
+      cell: ({ row }) => {
+        const departamento = row.original;
+        const [open, setOpen] = React.useState(false);
+        return (
+          <>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+                  <Eye className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Ver detalles</p>
+              </TooltipContent>
+            </Tooltip>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Detalles del Departamento</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Nombre</label>
+                    <p className="text-lg font-semibold">{departamento.nombreDepartamento}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Cargos</label>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {departamento.cargos && departamento.cargos.length > 0 ? (
+                        departamento.cargos.map((cargo: string, idx: number) => {
+                          return (
+                            <span key={idx} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium">
+                              {cargo}
+                            </span>
+                          );
+                        })
+                      ) : (
+                        <span className="text-gray-400">Sin cargos</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </>
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      id: "editarDepartamento",
+      header: "",
+      cell: ({ row }) => {
+        const departamento = row.original;
+        const [open, setOpen] = React.useState(false);
         
-        async function fetchData() {
-          const res = await fetch("/api/departamentos");
-          const data = await res.json();
-          setData(data);
-        }
-    
-        fetchData();
-      }, []);
-      
+        return (
+          <>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Editar departamento</p>
+              </TooltipContent>
+            </Tooltip>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogContent className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Editar Departamento</DialogTitle>
+                  <ScrollArea className="max-h-[70vh] p-4">
+                    <DepartamentoForm 
+                      onClose={() => setOpen(false)} 
+                      isEditing={true} 
+                      initialData={departamento}
+                      onSuccess={fetchData}
+                    />
+                  </ScrollArea>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </>
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -209,7 +241,7 @@ export function DepartamentosTable() {
               <DialogHeader>
               <DialogTitle>Crear Departamento</DialogTitle>
               <ScrollArea className="max-h-[70vh] p-4">
-                <DepartamentoForm onClose = {() => setOpen(false)}/>
+                <DepartamentoForm onClose = {() => setOpen(false)} onSuccess={fetchData}/>
               </ScrollArea>
               </DialogHeader>
           </DialogContent>

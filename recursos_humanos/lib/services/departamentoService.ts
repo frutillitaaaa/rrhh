@@ -8,10 +8,29 @@ export async function obtenerTodosLosDepartamentos(): Promise<Departamento[]> {
         const data = await redis.hgetall(DEPARTAMENTOS_KEY);
         console.log("Valor obtenido desde Redis:", data);
         if (!data) return [];
-        return Object.entries(data).map(([nombreDepartamento, cargos]) => ({
-            nombreDepartamento,
-            cargos: typeof cargos === 'string' ? JSON.parse(cargos) : cargos
-}));
+        return Object.entries(data).map(([nombreDepartamento, cargos]) => {
+            let cargosArray: string[];
+            if (typeof cargos === 'string') {
+                try {
+                    cargosArray = JSON.parse(cargos);
+                } catch {
+                    cargosArray = [];
+                }
+            } else if (Array.isArray(cargos)) {
+                cargosArray = cargos.map(cargo => 
+                    typeof cargo === 'string' ? cargo : 
+                    typeof cargo === 'object' && cargo !== null ? 
+                        (cargo as any).label || (cargo as any).value || '' : ''
+                );
+            } else {
+                cargosArray = [];
+            }
+            
+            return {
+                nombreDepartamento,
+                cargos: cargosArray
+            };
+        });
     } catch (error) {
         console.error("Error en obtenerTodosLosDepartamentos (Redis):", error);
         throw new Error("No se pudieron obtener los departamentos.");
@@ -22,9 +41,26 @@ export async function obtenerDepartamentoPorNombre(nombreDepartamento: string): 
     try {
         const secciones = await redis.hget(DEPARTAMENTOS_KEY, nombreDepartamento);
         if (!secciones) return null;
+        
+        let cargosArray: string[];
+        try {
+            const parsed = JSON.parse(secciones as string);
+            if (Array.isArray(parsed)) {
+                cargosArray = parsed.map(cargo => 
+                    typeof cargo === 'string' ? cargo : 
+                    typeof cargo === 'object' && cargo !== null ? 
+                        (cargo as any).label || (cargo as any).value || '' : ''
+                );
+            } else {
+                cargosArray = [];
+            }
+        } catch {
+            cargosArray = [];
+        }
+        
         return {
             nombreDepartamento,
-            cargos: JSON.parse(secciones as string) as string[]
+            cargos: cargosArray
         };
     } catch (error) {
         console.error(`Error en obtenerDepartamentoPorNombre con nombre ${nombreDepartamento} (Redis):`, error);
@@ -33,6 +69,9 @@ export async function obtenerDepartamentoPorNombre(nombreDepartamento: string): 
 }
 
 export async function agregarDepartamento(departamento: Departamento): Promise<void> {
+    if (!departamento.nombreDepartamento || departamento.nombreDepartamento === "undefined" || departamento.nombreDepartamento.trim() === "") {
+        throw new Error("El nombre del departamento es inválido. No se puede crear en Redis.");
+    }
     try {
         await redis.hset(DEPARTAMENTOS_KEY, {
             [departamento.nombreDepartamento]: JSON.stringify(departamento.cargos)
@@ -43,8 +82,10 @@ export async function agregarDepartamento(departamento: Departamento): Promise<v
     }
 }
 
-
 export async function actualizarDepartamento(nombreDepartamento: string, data: Partial<Departamento>): Promise<void> {
+    if (!nombreDepartamento || nombreDepartamento === "undefined" || nombreDepartamento.trim() === "") {
+        throw new Error("El nombre del departamento es inválido. No se puede actualizar en Redis.");
+    }
     try {
         if (data.cargos) {
             await redis.hset(DEPARTAMENTOS_KEY, {
