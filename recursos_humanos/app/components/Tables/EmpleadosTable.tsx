@@ -67,10 +67,40 @@ export function EmpleadosTable() {
     const [cantMostrar, setCantMostrar] = React.useState<number>(10);
     const [selectedEmpleado, setSelectedEmpleado] = React.useState<Empleado | null>(null);
     const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false);
+    const [isEliminando, setIsEliminando] = React.useState(false);
 
     const handleVerDetalles = (empleado: Empleado) => {
         setSelectedEmpleado(empleado);
         setIsDetailDialogOpen(true);
+    };
+
+    const handleEliminarEmpleados = async () => {
+        const selectedRows = table.getFilteredSelectedRowModel().rows;
+        if (selectedRows.length === 0) {
+            alert("Debe seleccionar al menos un empleado para eliminar");
+            return;
+        }
+
+        setIsEliminando(true);
+        try {
+            const empleadosIds = selectedRows.map(row => row.original._id);
+            const results = await Promise.all(empleadosIds.map(async (id) => {
+                const res = await fetch(`/api/empleados/${id}`, { method: "DELETE" });
+                return { id, ok: res.ok };
+            }));
+            const eliminados = results.filter(r => r.ok).length;
+            const fallidos = results.length - eliminados;
+            alert(`Eliminados: ${eliminados}. Fallidos: ${fallidos}`);
+            const res = await fetch("/api/empleados");
+            const newData = await res.json();
+            setData(newData);
+            table.toggleAllPageRowsSelected(false);
+        } catch (error) {
+            alert("Error al procesar la eliminación");
+            console.error("Error:", error);
+        } finally {
+            setIsEliminando(false);
+        }
     };
 
     const columns: ColumnDef<Empleado>[] = [
@@ -210,6 +240,14 @@ export function EmpleadosTable() {
             }
             className="max-w-sm"
           />
+          <Button
+            onClick={handleEliminarEmpleados}
+            disabled={table.getFilteredSelectedRowModel().rows.length === 0 || isEliminando}
+            className="mr-2"
+            variant="destructive"
+          >
+            {isEliminando ? "Eliminando..." : "Eliminar Empleado"}
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">

@@ -66,6 +66,7 @@ export function CandidatosTable() {
     const [isContratando, setIsContratando] = React.useState(false);
     const [selectedCandidato, setSelectedCandidato] = React.useState<Candidato | null>(null);
     const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false);
+    const [isEliminando, setIsEliminando] = React.useState(false);
 
     const handleVerDetalles = (candidato: Candidato) => {
         setSelectedCandidato(candidato);
@@ -217,6 +218,35 @@ export function CandidatosTable() {
         }
     };
 
+    const handleEliminarCandidatos = async () => {
+        const selectedRows = table.getFilteredSelectedRowModel().rows;
+        if (selectedRows.length === 0) {
+            alert("Debe seleccionar al menos un candidato para eliminar");
+            return;
+        }
+
+        setIsEliminando(true);
+        try {
+            const candidatosIds = selectedRows.map(row => row.original._id);
+            const results = await Promise.all(candidatosIds.map(async (id) => {
+                const res = await fetch(`/api/candidatos/${id}`, { method: "DELETE" });
+                return { id, ok: res.ok };
+            }));
+            const eliminados = results.filter(r => r.ok).length;
+            const fallidos = results.length - eliminados;
+            alert(`Eliminados: ${eliminados}. Fallidos: ${fallidos}`);
+            const res = await fetch("/api/candidatos");
+            const newData = await res.json();
+            setData(newData);
+            table.toggleAllPageRowsSelected(false);
+        } catch (error) {
+            alert("Error al procesar la eliminación");
+            console.error("Error:", error);
+        } finally {
+            setIsEliminando(false);
+        }
+    };
+
     const table = useReactTable({
         data,
         columns,
@@ -268,6 +298,14 @@ export function CandidatosTable() {
                     variant="default"
                 >
                     {isContratando ? "Contratando..." : "Contratar"}
+                </Button>
+                <Button
+                    onClick={handleEliminarCandidatos}
+                    disabled={table.getFilteredSelectedRowModel().rows.length === 0 || isEliminando}
+                    className="mr-2"
+                    variant="destructive"
+                >
+                    {isEliminando ? "Eliminando..." : "Eliminar Candidato"}
                 </Button>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
