@@ -18,7 +18,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, HousePlus } from 'lucide-react';
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -41,6 +41,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Departamento } from "@/types/departamento";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { DepartamentoForm } from "../Forms/DepartamentoForm";
 
 export const columns: ColumnDef<Departamento>[] = [
   {
@@ -102,11 +106,11 @@ export const columns: ColumnDef<Departamento>[] = [
 ]
 
 export function DepartamentosTable() {
-    const [data, setData] = React.useState<Departamento[]>([])
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+  const [open, setOpen] = useState(false)
+  const [data, setData] = React.useState<Departamento[]>([])
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
     useEffect(() => {
@@ -151,6 +155,30 @@ export function DepartamentosTable() {
           }
           className="max-w-sm"
         />
+
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Tooltip>
+              <TooltipTrigger asChild>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">
+                      <HousePlus />
+                    </Button>
+                  </DialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>
+                  <p>Crear Departamento</p>
+              </TooltipContent>
+          </Tooltip>
+          <DialogContent className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl">
+              <DialogHeader>
+              <DialogTitle>Crear Departamento</DialogTitle>
+              <ScrollArea className="max-h-[70vh] p-4">
+                <DepartamentoForm onClose = {() => setOpen(false)}/>
+              </ScrollArea>
+              </DialogHeader>
+          </DialogContent>
+          
+        </Dialog>
         
       </div>
       <div className="rounded-md border">

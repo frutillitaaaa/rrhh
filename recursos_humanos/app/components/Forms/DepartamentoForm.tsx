@@ -41,14 +41,13 @@ export function DepartamentoForm({ onClose }: DepartamentoFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
     nombreDepartamento: "",
-    
+    cargos: [],
     },
   })
 
-
   const onSubmit = async(data: z.infer<typeof formSchema> ) => {
     try {
-        const req = await fetch('http://localhost:3000/api/departamentos', {
+        const req = await fetch('/api/departamentos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -71,7 +70,7 @@ export function DepartamentoForm({ onClose }: DepartamentoFormProps) {
             <FormItem>
               <FormLabel>Nombre Departamento</FormLabel>
               <FormControl>
-                <Input placeholder="Ingeniero de Software" {...field} />
+                <Input placeholder="Desarrollo de Software" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -83,9 +82,9 @@ export function DepartamentoForm({ onClose }: DepartamentoFormProps) {
             name="cargos"
             render={({ field }) => (
             <FormItem>
-                <FormLabel>Cargo</FormLabel>
+                <FormLabel>Cargos</FormLabel>
                 <FormControl>
-                    <MultipleCargosSelector value = {field.value || []} onChange={field.onChange}/>
+                    <MultipleCargosSelector value = {field.value} onChange={field.onChange}/>
                 </FormControl>
             </FormItem>
             )}
