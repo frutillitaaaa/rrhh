@@ -73,6 +73,7 @@ export function CandidatosTable() {
         pageIndex: 0,
         pageSize: 10
     });
+    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
 
     const handleVerDetalles = (candidato: Candidato) => {
         setSelectedCandidato(candidato);
@@ -312,7 +313,7 @@ export function CandidatosTable() {
                     {isContratando ? "Contratando..." : "Contratar"}
                 </Button>
                 <Button
-                    onClick={handleEliminarCandidatos}
+                    onClick={() => setIsConfirmDeleteOpen(true)}
                     disabled={table.getFilteredSelectedRowModel().rows.length === 0 || isEliminando}
                     className="mr-2"
                     variant="destructive"
@@ -503,6 +504,32 @@ export function CandidatosTable() {
                             </div>
                         </div>
                     )}
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={isConfirmDeleteOpen} onOpenChange={setIsConfirmDeleteOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Confirmar eliminación</DialogTitle>
+                        <DialogDescription>
+                            ¿Estás seguro de eliminar Candidato(s)?
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button variant="outline" onClick={() => setIsConfirmDeleteOpen(false)}>
+                            Cancelar
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={async () => {
+                                setIsConfirmDeleteOpen(false);
+                                await handleEliminarCandidatos();
+                            }}
+                            disabled={isEliminando}
+                        >
+                            Eliminar
+                        </Button>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>
