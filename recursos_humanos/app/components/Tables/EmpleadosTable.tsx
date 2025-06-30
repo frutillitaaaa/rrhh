@@ -57,6 +57,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
+import { useRouter } from 'next/navigation'
 
 export function EmpleadosTable() {
     const [data, setData] = React.useState<Empleado[]>([])
@@ -68,10 +69,11 @@ export function EmpleadosTable() {
     const [selectedEmpleado, setSelectedEmpleado] = React.useState<Empleado | null>(null);
     const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false);
     const [isEliminando, setIsEliminando] = React.useState(false);
+    const router = useRouter();
 
     const handleVerDetalles = (empleado: Empleado) => {
-        setSelectedEmpleado(empleado);
-        setIsDetailDialogOpen(true);
+      setSelectedEmpleado(empleado);
+      router.push(`/dashboard/empleados/${empleado._id}`);
     };
 
     const handleEliminarEmpleados = async () => {
@@ -368,8 +370,7 @@ export function EmpleadosTable() {
           </div>
         </div>
       </div>
-
-      <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
+{/* <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
           <DialogContent className="max-w-md">
               <DialogHeader>
                   <DialogTitle>Detalles del Empleado</DialogTitle>
@@ -442,7 +443,8 @@ export function EmpleadosTable() {
                   </div>
               )}
           </DialogContent>
-      </Dialog>
+      </Dialog> */}
+      
     </>
   )
 }
