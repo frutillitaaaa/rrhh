@@ -3,6 +3,8 @@
 import * as React from "react"
 
 import { useEffect, useState } from "react";
+import type { Row } from '@tanstack/react-table';
+
 import { Usuario } from "@/types/usuario"
 
 import {
@@ -134,6 +136,9 @@ export function UsuariosTable() {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
     const [cantMostrar, setCantMostrar] = React.useState<number>(10)
+    const [globalFilter, setGlobalFilter] = useState("");
+
+
 
     useEffect(() => {
     
@@ -162,9 +167,20 @@ export function UsuariosTable() {
     fetchData();
   }, []);
   
+     function globalFilterFn (row: Row<Usuario>, filterValue: string):boolean {
+      console.log("Row values:", row.original);
+console.log("Filter value:", filterValue);
+        return Object.values(row.original).some((value) =>
+        String(value ?? "").toLowerCase().includes(String(filterValue).toLowerCase())
+      )
+      }
     const table = useReactTable({
         data,
         columns,
+        filterFns: {
+  global: globalFilterFn,
+},
+        onGlobalFilterChange: setGlobalFilter,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
@@ -174,23 +190,25 @@ export function UsuariosTable() {
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
+          globalFilter,
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
         },
+        
     })
     
     return (
     <div className="w-full">
       <div className="flex items-center py-4 gap-x-4">
         <Input
-          placeholder="Buscar por Rut..."
-          value={(table.getColumn("rut")?.getFilterValue() as string) ?? ""}
+          placeholder="Buscar un usuario..."
+          value={table.getState().globalFilter ?? ""}
           onChange={(event) =>
-            table.getColumn("rut")?.setFilterValue(event.target.value)
+            table.setGlobalFilter(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm"  
         />
         <Dialog open={open} onOpenChange={setOpen}>
           <Tooltip>
