@@ -78,54 +78,53 @@ import { Empleado } from "@/types/empleado";
 import { Candidato } from "@/types/candidato";
 
 export const columns: ColumnDef<Usuario>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-          <Checkbox
-              checked={
-                  table.getIsAllPageRowsSelected() ||
-                  (table.getIsSomePageRowsSelected() && "indeterminate")
-              }
-              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-              aria-label="Select all"
-          />
-      ),
-      cell: ({ row }) => (
-          <Checkbox
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label="Select row"
-          />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      accessorKey: "rut",
-      header: "Rut",
-    },
-    {
-      accessorKey: "nombre",
-      header: "Nombre",
-    },
-    {
-      accessorKey: "apellido",
-      header: "Apellido",
-    },
-    {
-      accessorKey: "correo",
-      header: "Correo",
-    },
-    {
-      accessorKey: "telefono",
-      header: "Teléfono",
-        
-    },
-    {
-      accessorKey: "tipo_usuario",
-      header: "Tipo",
-    }
-    
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+          checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+        <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+        />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "rut",
+    header: "Rut",
+  },
+  {
+    accessorKey: "nombre",
+    header: "Nombre",
+  },
+  {
+    accessorKey: "apellido",
+    header: "Apellido",
+  },
+  {
+    accessorKey: "correo",
+    header: "Correo",
+  },
+  {
+    accessorKey: "telefono",
+    header: "Teléfono",
+      
+  },
+  {
+    accessorKey: "tipo_usuario",
+    header: "Tipo",
+  }
 ]
 
 export function UsuariosTable() {
@@ -141,70 +140,68 @@ export function UsuariosTable() {
       pageSize: 10
     });
 
-
     useEffect(() => {
-    
-    async function fetchData() {
-      const [empleadosRes, candidatosRes] = await Promise.all([
-        fetch("/api/empleados"),
-        fetch("/api/candidatos"),
-      ])
-      const empleados = await empleadosRes.json();
-      const candidatos = await candidatosRes.json();
+      async function fetchData() {
+        const [empleadosRes, candidatosRes] = await Promise.all([
+          fetch("/api/empleados"),
+          fetch("/api/candidatos"),
+        ])
+        const empleados = await empleadosRes.json();
+        const candidatos = await candidatosRes.json();
 
-      const empleadosConTipo = empleados.map((e: Empleado) => ({
-        ...e,
-        tipo_usuario: "Empleado",
-      }));
+        const empleadosConTipo = empleados.map((e: Empleado) => ({
+          ...e,
+          tipo_usuario: "Empleado",
+        }));
 
-      const candidatosConTipo = candidatos.map((c: Candidato) => ({
-        ...c,
-        tipo_usuario: "Candidato",
-      }));
+        const candidatosConTipo = candidatos.map((c: Candidato) => ({
+          ...c,
+          tipo_usuario: "Candidato",
+        }));
 
-      const usuarios = [...empleadosConTipo, ...candidatosConTipo];
-      setData(usuarios);
-    }
+        const usuarios = [...empleadosConTipo, ...candidatosConTipo];
+        setData(usuarios);
+      }
 
-    fetchData();
-  }, []);
+      fetchData();
+    }, []);
   
-     function globalFilterFn (row: Row<Usuario>, filterValue: string):boolean {
-      console.log("Row values:", row.original);
-console.log("Filter value:", filterValue);
-        return Object.values(row.original).some((value) =>
+    function globalFilterFn (row: Row<Usuario>, filterValue: string):boolean {
+    console.log("Row values:", row.original);
+    console.log("Filter value:", filterValue);
+      return Object.values(row.original).some((value) =>
         String(value ?? "").toLowerCase().includes(String(filterValue).toLowerCase())
       )
-      }
+    }
     const table = useReactTable({
-        data,
-        columns,
-        filterFns: {
-          global: globalFilterFn,
+      data,
+      columns,
+      filterFns: {
+        global: globalFilterFn,
+      },
+      onGlobalFilterChange: setGlobalFilter,
+      onSortingChange: setSorting,
+      onColumnFiltersChange: setColumnFilters,
+      getCoreRowModel: getCoreRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      initialState: {
+        pagination: {
+          pageSize: 5, 
         },
-        onGlobalFilterChange: setGlobalFilter,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        initialState: {
-          pagination: {
-            pageSize: 5, 
-          },
-        },
-        onPaginationChange: setPagination,
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        state: {
-          pagination,
-          globalFilter,
-            sorting,
-            columnFilters,
-            columnVisibility,
-            rowSelection,
-        },
+      },
+      onPaginationChange: setPagination,
+      getSortedRowModel: getSortedRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
+      onColumnVisibilityChange: setColumnVisibility,
+      onRowSelectionChange: setRowSelection,
+      state: {
+        pagination,
+        globalFilter,
+          sorting,
+          columnFilters,
+          columnVisibility,
+          rowSelection,
+      },
     })
     
     return (
