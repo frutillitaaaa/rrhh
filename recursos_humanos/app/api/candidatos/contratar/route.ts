@@ -38,7 +38,7 @@ export async function POST(request: Request) {
                     telefono: candidato.telefono,
                     cargo: candidato.cargo,
                     sueldo_liquido: candidato.sueldo_ideal,
-                    departamento: departamento,
+                    departamento: candidato.departamento,
                     fecha_contratacion: fechaContratacion,
                     estado: 'Activo',
                     dias_vacaciones: 0

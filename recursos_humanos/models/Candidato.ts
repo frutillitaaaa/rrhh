@@ -16,6 +16,7 @@ const CandidatoSchema = new Schema<ICandidato>({
 
     curriculum: { type: CurriculumSchema, required: false },
     cargo: { type: String, required: true },
+    departamento: { type: String, required: true},
     sueldo_ideal: { type: Number, required: true }, 
 }, {
     timestamps: true,

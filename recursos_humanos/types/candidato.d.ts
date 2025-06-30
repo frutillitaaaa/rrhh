@@ -7,5 +7,6 @@ export interface Candidato extends Usuario, Document {
         experiencia_laboral: string
     }
     cargo: string
+    departamento: string
     sueldo_ideal: number
 }

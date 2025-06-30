@@ -215,6 +215,18 @@ export function UsuarioForm({ onClose }: UsuarioFormProps) {
                   </FormItem>
                 )}
             />
+            <FormField 
+                  control={form.control}
+                  name="departamento"
+                  render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Departamento</FormLabel>
+                    <FormControl>
+                      <DepartamentosSelector value = {field.value || ""} onChange={field.onChange}/>
+                    </FormControl>
+                  </FormItem>
+                )}
+                />
             
               <FormField 
                   control={form.control}
