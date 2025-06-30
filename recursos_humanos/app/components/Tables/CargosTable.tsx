@@ -64,6 +64,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { Cargo } from "@/types/cargo"
 import { CargoForm } from "../Forms/CargoForm";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 export const columns: ColumnDef<Cargo>[] = [
@@ -147,6 +148,7 @@ export function CargosTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [cantMostrar, setCantMostrar] = React.useState<number>(10);
 
     useEffect(() => {
         
@@ -266,6 +268,23 @@ export function CargosTable() {
           </TableBody>
         </Table>
       </div>
+      <div className="flex items-center justify-end space-x-2 py-5">
+      <span className="text-black text-[14px]">Mostrar: </span>
+          <Select value={cantMostrar?.toString()} onValueChange={(value) => setCantMostrar(Number(value))}>
+            <SelectTrigger className="w-[64px]">
+              <SelectValue placeholder="Mostrar ..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div> 
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-muted-foreground flex-1 text-sm">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}

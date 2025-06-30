@@ -277,20 +277,7 @@ export function CandidatosTable() {
                   }
                   className="max-w-sm"
                 />
-                <Select value={cantMostrar?.toString()} onValueChange={(value) => setCantMostrar(Number(value))}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Mostrar ..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="1">1</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                
                 <Button
                     onClick={handleContratar}
                     disabled={table.getFilteredSelectedRowModel().rows.length === 0 || isContratando}
@@ -385,7 +372,22 @@ export function CandidatosTable() {
                         </Table>
             </div>
             <div className="flex items-center justify-end space-x-2 py-5">
-        <span className="text-black text-[14px]">Mostrando {cantMostrar} elementos</span>
+        <span className="text-black text-[14px]">Mostrar: </span>
+                  <Select value={cantMostrar?.toString()} onValueChange={(value) => setCantMostrar(Number(value))}>
+                    <SelectTrigger className="w-[64px]">
+                      <SelectValue placeholder="Mostrar ..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="1">1</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  
       </div>
             <div className="flex items-center justify-end space-x-2 py-4">
                 <div className="text-muted-foreground flex-1 text-sm">
