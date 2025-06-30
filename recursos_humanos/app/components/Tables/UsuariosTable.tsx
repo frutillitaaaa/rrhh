@@ -135,9 +135,11 @@ export function UsuariosTable() {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
-    const [cantMostrar, setCantMostrar] = React.useState<number>(10)
     const [globalFilter, setGlobalFilter] = useState("");
-
+    const [pagination, setPagination] = useState({
+      pageIndex: 0,
+      pageSize: 10
+    });
 
 
     useEffect(() => {
@@ -178,25 +180,31 @@ console.log("Filter value:", filterValue);
         data,
         columns,
         filterFns: {
-  global: globalFilterFn,
-},
+          global: globalFilterFn,
+        },
         onGlobalFilterChange: setGlobalFilter,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        initialState: {
+          pagination: {
+            pageSize: 5, 
+          },
+        },
+        onPaginationChange: setPagination,
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
+          pagination,
           globalFilter,
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
         },
-        
     })
     
     return (
@@ -283,7 +291,7 @@ console.log("Filter value:", filterValue);
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.slice(0, cantMostrar).map((row) => (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
@@ -313,20 +321,21 @@ console.log("Filter value:", filterValue);
       </div>
         <div className="flex items-center justify-end space-x-2 py-5">
           <span className="text-black text-[14px]">Mostrar: </span>
-          <Select value={cantMostrar?.toString()} onValueChange={(value) => setCantMostrar(Number(value))}>
-            <SelectTrigger className="w-[64px]">
-              <SelectValue placeholder="Mostrar ..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+            <Select
+              value={String(table.getState().pagination.pageSize)}
+              onValueChange={(value) => table.setPageSize(Number(value))}
+            >
+              <SelectTrigger className="w-[80px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[10, 20, 50].map((size) => (
+                  <SelectItem key={size} value={String(size)}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           
         </div>
       <div className="flex items-center justify-end space-x-2 py-4">

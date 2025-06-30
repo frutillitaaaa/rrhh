@@ -21,6 +21,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   useReactTable,
   VisibilityState,
@@ -54,7 +55,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Candidato } from "@/types/candidato"
-import { useEffect } from "react"
+import { useEffect, useState } from "react";
 
 export function CandidatosTable() {
     const [data, setData] = React.useState<Candidato[]>([]);
@@ -67,6 +68,11 @@ export function CandidatosTable() {
     const [selectedCandidato, setSelectedCandidato] = React.useState<Candidato | null>(null);
     const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false);
     const [isEliminando, setIsEliminando] = React.useState(false);
+    const [globalFilter, setGlobalFilter] = useState("");
+    const [pagination, setPagination] = useState({
+        pageIndex: 0,
+        pageSize: 10
+    });
 
     const handleVerDetalles = (candidato: Candidato) => {
         setSelectedCandidato(candidato);
@@ -247,35 +253,54 @@ export function CandidatosTable() {
         }
     };
 
-    const table = useReactTable({
-        data,
-        columns,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        state: {
-            sorting,
-            columnFilters,
-            columnVisibility,
-            rowSelection,
-        },
-    })
+  function globalFilterFn (row: Row<Candidato>, filterValue: string):boolean {
+        console.log("Row values:", row.original);
+  console.log("Filter value:", filterValue);
+          return Object.values(row.original).some((value) =>
+          String(value ?? "").toLowerCase().includes(String(filterValue).toLowerCase())
+        )
+        }
+      const table = useReactTable({
+          data,
+          columns,
+          filterFns: {
+            global: globalFilterFn,
+          },
+          onGlobalFilterChange: setGlobalFilter,
+          onSortingChange: setSorting,
+          onColumnFiltersChange: setColumnFilters,
+          getCoreRowModel: getCoreRowModel(),
+          getPaginationRowModel: getPaginationRowModel(),
+          initialState: {
+            pagination: {
+              pageSize: 5, 
+            },
+          },
+          onPaginationChange: setPagination,
+          getSortedRowModel: getSortedRowModel(),
+          getFilteredRowModel: getFilteredRowModel(),
+          onColumnVisibilityChange: setColumnVisibility,
+          onRowSelectionChange: setRowSelection,
+          state: {
+            pagination,
+            globalFilter,
+              sorting,
+              columnFilters,
+              columnVisibility,
+              rowSelection,
+          },
+      })
     
     return (
         <div className="w-full">
               <div className="flex items-center py-4">
                 <Input
-                  placeholder="Buscar por Rut..."
-                  value={(table.getColumn("rut")?.getFilterValue() as string) ?? ""}
-                  onChange={(event) =>
-                    table.getColumn("rut")?.setFilterValue(event.target.value)
-                  }
-                  className="max-w-sm"
+                    placeholder="Buscar un candidato..."
+                    value={table.getState().globalFilter ?? ""}
+                    onChange={(event) =>
+                    table.setGlobalFilter(event.target.value)
+                    }
+                    className="max-w-sm"  
                 />
                 
                 <Button
@@ -372,23 +397,24 @@ export function CandidatosTable() {
                         </Table>
             </div>
             <div className="flex items-center justify-end space-x-2 py-5">
-        <span className="text-black text-[14px]">Mostrar: </span>
-                  <Select value={cantMostrar?.toString()} onValueChange={(value) => setCantMostrar(Number(value))}>
-                    <SelectTrigger className="w-[64px]">
-                      <SelectValue placeholder="Mostrar ..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="1">1</SelectItem>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  
-      </div>
+                      <span className="text-black text-[14px]">Mostrar: </span>
+                        <Select
+                          value={String(table.getState().pagination.pageSize)}
+                          onValueChange={(value) => table.setPageSize(Number(value))}
+                        >
+                          <SelectTrigger className="w-[80px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {[10, 20, 50].map((size) => (
+                              <SelectItem key={size} value={String(size)}>
+                                {size}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      
+                    </div>
             <div className="flex items-center justify-end space-x-2 py-4">
                 <div className="text-muted-foreground flex-1 text-sm">
                     {table.getFilteredSelectedRowModel().rows.length} of{" "}
