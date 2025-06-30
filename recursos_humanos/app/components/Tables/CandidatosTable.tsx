@@ -475,7 +475,11 @@ export function CandidatosTable() {
                                     <label className="text-sm font-medium text-gray-500">Cargo</label>
                                     <p className="text-sm">{selectedCandidato.cargo}</p>
                                 </div>
-                                <div className="col-span-2">
+                                <div>
+                                    <label className="text-sm font-medium text-gray-500">Departamento</label>
+                                    <p className="text-sm">{selectedCandidato.departamento}</p>
+                                </div>
+                                <div>
                                     <label className="text-sm font-medium text-gray-500">Sueldo Ideal</label>
                                     <p className="text-sm">
                                         {new Intl.NumberFormat("es-CL", {

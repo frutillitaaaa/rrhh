@@ -65,18 +65,3 @@ export async function eliminarDepartamento(nombreDepartamento: string): Promise<
         throw new Error("No se pudo eliminar el departamento.");
     }
 }
-
-export async function obtenerDepartamentoPorCargo(cargo: string): Promise<string | null> {
-    try {
-        const departamentos = await obtenerTodosLosDepartamentos();
-        for (const departamento of departamentos) {
-            if (departamento.cargos.includes(cargo)) {
-                return departamento.nombreDepartamento;
-            }
-        }
-        return null;
-    } catch (error) {
-        console.error(`Error en obtenerDepartamentoPorCargo con cargo ${cargo}:`, error);
-        throw new Error("No se pudo obtener el departamento por cargo.");
-    }
-}

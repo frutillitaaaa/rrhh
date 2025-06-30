@@ -76,32 +76,68 @@ export const columns: ColumnDef<Departamento>[] = [
       <div className="capitalize">{row.getValue("nombreDepartamento")}</div>
     ),
   },
- {
-    id: "actions",
-    enableHiding: false,
+  {
+    accessorKey: "verDetalles",
+    header: "Ver detalles",
     cell: ({ row }) => {
-      const departamento = row.original
+      const departamento = row.original;
+      const [open, setOpen] = React.useState(false);
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-            >
-              Ver detalles
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Editar datos</DropdownMenuItem>
-            <DropdownMenuItem>Eliminar empleado</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+        <>
+          <Button variant="outline" onClick={() => setOpen(true)}>
+            Ver detalles
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Detalles del Departamento</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-500">Nombre</label>
+                  <p className="text-lg font-semibold">{departamento.nombreDepartamento}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">Cargos</label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {departamento.cargos && departamento.cargos.length > 0 ? (
+                      departamento.cargos.map((cargo: any, idx: number) => {
+                        let cargoText = '';
+                        if (typeof cargo === 'string') cargoText = cargo;
+                        else if (cargo && typeof cargo === 'object') cargoText = cargo.label || cargo.value || '';
+                        return (
+                          <span key={idx} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium">
+                            {cargoText}
+                          </span>
+                        );
+                      })
+                    ) : (
+                      <span className="text-gray-400">Sin cargos</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
+      );
     },
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "editarDepartamento",
+    header: "Editar departamento",
+    cell: ({ row }) => {
+      // Aquí puedes conectar el botón con el formulario de edición existente
+      return (
+        <Button variant="secondary">
+          Editar departamento
+        </Button>
+      );
+    },
+    enableSorting: false,
+    enableHiding: false,
   },
 ]
 

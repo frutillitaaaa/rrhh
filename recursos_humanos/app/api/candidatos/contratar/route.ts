@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { obtenerCandidatoPorId, eliminarCandidato } from '@/lib/services/candidatoService';
 import { crearEmpleado } from '@/lib/services/empleadoService';
-import { obtenerDepartamentoPorCargo } from '@/lib/services/departamentoService';
 import { Candidato } from '@/types/candidato';
 import { Empleado } from '@/types/empleado';
 
@@ -24,9 +23,8 @@ export async function POST(request: Request) {
                     continue;
                 }
 
-                const departamento = await obtenerDepartamentoPorCargo(candidato.cargo);
-                if (!departamento) {
-                    resultados.push({ candidatoId, success: false, message: `No se encontró departamento para el cargo: ${candidato.cargo}` });
+                if (!candidato.departamento) {
+                    resultados.push({ candidatoId, success: false, message: `El candidato no tiene departamento asignado` });
                     continue;
                 }
 
