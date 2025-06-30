@@ -140,7 +140,7 @@ export function EmpleadosTable() {
                   Nombre <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
           ),
-          cell: ({ row }) => <div className="lowercase">{row.getValue("nombre")}</div>,
+          cell: ({ row }) => <div >{row.getValue("nombre")}</div>,
         },
         {
           accessorKey: "apellido",
@@ -149,7 +149,7 @@ export function EmpleadosTable() {
                   Apellido <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
           ),
-          cell: ({ row }) => <div className="lowercase">{row.getValue("apellido")}</div>,
+          cell: ({ row }) => <div >{row.getValue("apellido")}</div>,
         },
         {
           accessorKey: "cargo",
@@ -158,7 +158,7 @@ export function EmpleadosTable() {
               Cargo <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           ),
-          cell: ({ row }) => <div className="lowercase">{row.getValue("cargo")}</div>,
+          cell: ({ row }) => <div >{row.getValue("cargo")}</div>,
       
         },
         {
@@ -168,7 +168,7 @@ export function EmpleadosTable() {
               Departamento <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           ),
-          cell: ({ row }) => <div className="lowercase">{row.getValue("departamento")}</div>,
+          cell: ({ row }) => <div >{row.getValue("departamento")}</div>,
         },
         {
         id: "actions",

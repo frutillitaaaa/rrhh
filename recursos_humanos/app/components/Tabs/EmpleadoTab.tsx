@@ -25,7 +25,8 @@ interface Props {
 }
 export function EmpleadoTab({empleado}: Props) {
   return (
-    <div className="flex w-full max-w-sm flex-col gap-6">
+    <div className="flex w-full flex-col gap-6">
+        <h1 style={{ fontWeight: 'bold' }}>Empleado {empleado.nombre} {empleado.apellido}</h1>
       <Tabs defaultValue="general">
         <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>
@@ -40,73 +41,67 @@ export function EmpleadoTab({empleado}: Props) {
                 Datos generales del empleado
               </CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-6">
-              <div className="grid gap-3">
-                  <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                          <div>
-                              <label className="text-sm font-medium text-gray-500">RUT</label>
-                              <p className="text-sm">{empleado.rut}</p>
-                          </div>
-                          <div>
-                              <label className="text-sm font-medium text-gray-500">Nombre</label>
-                              <p className="text-sm">{empleado.nombre}</p>
-                          </div>
-                          <div>
-                              <label className="text-sm font-medium text-gray-500">Apellido</label>
-                              <p className="text-sm">{empleado.apellido}</p>
-                          </div>
-                          <div>
-                              <label className="text-sm font-medium text-gray-500">Correo</label>
-                              <p className="text-sm">{empleado.correo}</p>
-                          </div>
-                          <div>
-                              <label className="text-sm font-medium text-gray-500">Teléfono</label>
-                              <p className="text-sm">{empleado.telefono}</p>
-                          </div>
-                          <div>
-                              <label className="text-sm font-medium text-gray-500">Cargo</label>
-                              <p className="text-sm">{empleado.cargo}</p>
-                          </div>
-                          <div>
-                              <label className="text-sm font-medium text-gray-500">Departamento</label>
-                              <p className="text-sm">{empleado.departamento}</p>
-                          </div>
-                          <div>
-                              <label className="text-sm font-medium text-gray-500">Estado</label>
-                              <p className="text-sm">{empleado.estado || "No especificado"}</p>
-                          </div>
-                          <div className="col-span-2">
-                              <label className="text-sm font-medium text-gray-500">Sueldo Líquido</label>
-                              <p className="text-sm">
-                                  {empleado.sueldo_liquido ? 
-                                      new Intl.NumberFormat("es-CL", {
-                                          style: "currency",
-                                          currency: "CLP",
-                                      }).format(empleado.sueldo_liquido) : 
-                                      "No especificado"
-                                  }
-                              </p>
-                          </div>
-                          <div className="col-span-2">
-                              <label className="text-sm font-medium text-gray-500">Fecha de Contratación</label>
-                              <p className="text-sm">{empleado.fecha_contratacion}</p>
-                          </div>
-                          {(empleado.dias_vacaciones !== undefined && empleado.dias_vacaciones !== null) && (
-                              <div className="col-span-2">
-                                  <label className="text-sm font-medium text-gray-500">Días de Vacaciones</label>
-                                  <p className="text-sm">
-                                      {empleado.dias_vacaciones > 0
-                                          ? `${empleado.dias_vacaciones} días`
-                                          : "No está en vacaciones"}
-                                  </p>
-                              </div>
-                          )}
-                      </div>
-                  </div>
-              
-       
-              </div>
+            <CardContent className="w-full grid grid-cols-2 gap-6">
+                <div className="col-span-2 grid grid-cols-2 gap-4 w-full">
+                    <div className="w-full">
+                        <label className="text-sm font-medium text-gray-500">RUT</label>
+                        <p className="text-sm">{empleado.rut}</p>
+                    </div>
+                    <div className="w-full">
+                        <label className="text-sm font-medium text-gray-500">Nombre</label>
+                        <p className="text-sm">{empleado.nombre}</p>
+                    </div>
+                    <div className="w-full">
+                        <label className="text-sm font-medium text-gray-500">Apellido</label>
+                        <p className="text-sm">{empleado.apellido}</p>
+                    </div>
+                    <div className="w-full">
+                        <label className="text-sm font-medium text-gray-500">Correo</label>
+                        <p className="text-sm">{empleado.correo}</p>
+                    </div>
+                    <div className="w-full">
+                        <label className="text-sm font-medium text-gray-500">Teléfono</label>
+                        <p className="text-sm">{empleado.telefono}</p>
+                    </div>
+                    <div>
+                        <label className="text-sm font-medium text-gray-500">Cargo</label>
+                        <p className="text-sm">{empleado.cargo}</p>
+                    </div>
+                    <div>
+                        <label className="text-sm font-medium text-gray-500">Departamento</label>
+                        <p className="text-sm">{empleado.departamento}</p>
+                    </div>
+                    <div>
+                        <label className="text-sm font-medium text-gray-500">Estado</label>
+                        <p className="text-sm">{empleado.estado || "No especificado"}</p>
+                    </div>
+                    <div className="col-span-2">
+                        <label className="text-sm font-medium text-gray-500">Sueldo Líquido</label>
+                        <p className="text-sm">
+                            {empleado.sueldo_liquido ? 
+                                new Intl.NumberFormat("es-CL", {
+                                    style: "currency",
+                                    currency: "CLP",
+                                }).format(empleado.sueldo_liquido) : 
+                                "No especificado"
+                            }
+                        </p>
+                    </div>
+                    <div className="col-span-2">
+                        <label className="text-sm font-medium text-gray-500">Fecha de Contratación</label>
+                        <p className="text-sm">{empleado.fecha_contratacion}</p>
+                    </div>
+                    {(empleado.dias_vacaciones !== undefined && empleado.dias_vacaciones !== null) && (
+                        <div className="col-span-2">
+                            <label className="text-sm font-medium text-gray-500">Días de Vacaciones</label>
+                            <p className="text-sm">
+                                {empleado.dias_vacaciones > 0
+                                    ? `${empleado.dias_vacaciones} días`
+                                    : "No está en vacaciones"}
+                            </p>
+                        </div>
+                    )}
+                </div>
             </CardContent>
             <CardFooter>
             

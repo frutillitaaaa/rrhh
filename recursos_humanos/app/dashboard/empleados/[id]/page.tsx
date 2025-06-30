@@ -17,8 +17,6 @@ export default async function EmpleadoDetail ({ params }: Props) {
         return redirect("/dashboard/empleados");
     }
     return (
-        <div>
-            <EmpleadoTab empleado={empleado} />
-        </div>
+        <EmpleadoTab empleado={empleado} />
     );
 }
