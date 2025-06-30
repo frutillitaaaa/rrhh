@@ -108,8 +108,8 @@ export function DepartamentosTable() {
           <>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-                  <Eye className="h-4 w-4" />
+                <Button variant="outline" size="sm" onClick={() => setOpen(true)} className="p-0 rounded-full bg-black hover:bg-neutral-800">
+                  <Eye className="h-5 w-5 text-white" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -162,8 +162,8 @@ export function DepartamentosTable() {
           <>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
-                  <Edit className="h-4 w-4" />
+                <Button variant="secondary" size="sm" onClick={() => setOpen(true)} className="p-0 rounded-full bg-black hover:bg-neutral-800">
+                  <Edit className="h-5 w-5 text-white" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
