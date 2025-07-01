@@ -21,6 +21,8 @@ import { useRouter } from 'next/navigation';
 
 //types
 import { Empleado } from "@/types/empleado";
+import { EmpleadoForm } from "../Forms/EmpleadoForm";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 //components/ui
 import {
@@ -78,10 +80,17 @@ export function EmpleadosTable() {
     pageSize: 10
   });
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [empleadoToEdit, setEmpleadoToEdit] = useState<Empleado | null>(null);
   const router = useRouter();
     const handleVerDetalles = (empleado: Empleado) => {
       setSelectedEmpleado(empleado);
       router.push(`/dashboard/empleados/${empleado._id}`);
+    };
+
+    const handleEditarEmpleado = (empleado: Empleado) => {
+      setEmpleadoToEdit(empleado);
+      setIsEditDialogOpen(true);
     };
 
     const handleEliminarEmpleados = async () => {
@@ -199,8 +208,11 @@ export function EmpleadosTable() {
                   Ver detalles
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Editar datos</DropdownMenuItem>
-                <DropdownMenuItem>Eliminar empleado</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleEditarEmpleado(empleado)}
+                >
+                  Editar datos
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )
@@ -419,6 +431,31 @@ export function EmpleadosTable() {
               Eliminar
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Editar Empleado</DialogTitle>
+            <DialogDescription>
+              Modifica los datos del empleado. El RUT y la fecha de contratación no se pueden cambiar.
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[70vh] p-4">
+            {empleadoToEdit && (
+              <EmpleadoForm 
+                onClose={() => setIsEditDialogOpen(false)} 
+                isEditing={true} 
+                initialData={empleadoToEdit}
+                onSuccess={async () => {
+                  const res = await fetch("/api/empleados");
+                  const newData = await res.json();
+                  setData(newData);
+                }}
+              />
+            )}
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     </>
