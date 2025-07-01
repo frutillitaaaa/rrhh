@@ -87,9 +87,19 @@ export async function actualizarDepartamento(nombreDepartamento: string, data: P
         throw new Error("El nombre del departamento es inválido. No se puede actualizar en Redis.");
     }
     try {
+        if (data.nombreDepartamento && data.nombreDepartamento !== nombreDepartamento) {
+            const cargosActuales = await redis.hget(DEPARTAMENTOS_KEY, nombreDepartamento);
+            if (cargosActuales) {
+                await redis.hset(DEPARTAMENTOS_KEY, {
+                    [data.nombreDepartamento]: cargosActuales
+                });
+                await redis.hdel(DEPARTAMENTOS_KEY, nombreDepartamento);
+            }
+        }
+        const nombreFinal = data.nombreDepartamento || nombreDepartamento;
         if (data.cargos) {
             await redis.hset(DEPARTAMENTOS_KEY, {
-                [nombreDepartamento]: JSON.stringify(data.cargos)
+                [nombreFinal]: JSON.stringify(data.cargos)
             });
         }
     } catch (error) {

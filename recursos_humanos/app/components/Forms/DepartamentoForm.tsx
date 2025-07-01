@@ -74,7 +74,7 @@ export function DepartamentoForm({ onClose, isEditing = false, initialData, onSu
     try {
         let nombre: string | undefined = undefined;
         if (isEditing) {
-          nombre = initialData?.nombreDepartamento;
+          nombre = data.nombreDepartamento;
         } else {
           nombre = data.nombreDepartamento;
         }
@@ -85,10 +85,11 @@ Datos del form: ${JSON.stringify(data)}`);
           return;
         }
         const endpoint = isEditing
-          ? `/api/departamentos/${encodeURIComponent(nombre)}`
+          ? `/api/departamentos/${encodeURIComponent(initialData?.nombreDepartamento || '')}`
           : '/api/departamentos';
         const method = isEditing ? 'PUT' : 'POST';
         const requestBody = isEditing ? {
+          nombreDepartamento: nombre,
           cargos: data.cargos.map(cargo => cargo.value)
         } : {
           nombreDepartamento: nombre,
@@ -128,7 +129,6 @@ Datos del form: ${JSON.stringify(data)}`);
                 <Input 
                   placeholder="Desarrollo de Software" 
                   {...field} 
-                  disabled={isEditing} 
                 />
               </FormControl>
               <FormMessage />
