@@ -68,10 +68,47 @@ export function SolicitudesTable() {
     const [cantMostrar, setCantMostrar] = React.useState<number>(10)
     const [selectedSolicitud, setSelectedSolicitud] = React.useState<Solicitud | null>(null);
     const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false);
+    const [isRechazando, setIsRechazando] = React.useState(false);
+    const [isConfirmRechazarOpen, setIsConfirmRechazarOpen] = useState(false);
     
     const handleVerDetalles = (solicitud: Solicitud) => {
         setSelectedSolicitud(solicitud);
         setIsDetailDialogOpen(true);
+    };
+
+    const handleRechazarSolicitudes = async () => {
+        const selectedRows = table.getFilteredSelectedRowModel().rows;
+        if (selectedRows.length === 0) {
+            alert("Debe seleccionar al menos una solicitud para rechazar");
+            return;
+        }
+        setIsRechazando(true);
+
+        try {
+            const solicitudesIds = selectedRows.map(row => row.original._id);
+            const results = await Promise.all(solicitudesIds.map(async (id) => {
+                const res = await fetch(`/api/solicitudes/${id}`, { 
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ estado: 'Rechazada' })
+                });
+                return { id, ok: res.ok };
+            }));
+            const rechazadas = results.filter(r => r.ok).length;
+            const fallidas = results.length - rechazadas;
+            alert(`Rechazadas: ${rechazadas}. Fallidas: ${fallidas}`);
+            const res = await fetch("/api/solicitudes");
+            const newData = await res.json();
+            setData(newData);
+            table.toggleAllPageRowsSelected(false);
+        } catch (error) {
+            alert("Error al procesar el rechazo");
+            console.error("Error:", error);
+        } finally {
+            setIsRechazando(false);
+        }
     };
 
     const columns: ColumnDef<Solicitud>[] = [
@@ -220,6 +257,7 @@ export function SolicitudesTable() {
     })
     
     return (
+        <>
         <div className="w-full">
           <div className="flex items-center py-4">
             <Input
@@ -230,12 +268,20 @@ export function SolicitudesTable() {
               }
               className="max-w-sm"
             />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
-                  Columns <ChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
+            <div className="ml-auto flex items-center space-x-2">
+              <Button
+                onClick={() => setIsConfirmRechazarOpen(true)}
+                disabled={table.getFilteredSelectedRowModel().rows.length === 0 || isRechazando}
+                variant="destructive"
+              >
+                {isRechazando ? "Rechazando..." : "Rechazar Solicitud"}
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    Columns <ChevronDown />
+                  </Button>
+                </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {table
                   .getAllColumns()
@@ -256,6 +302,7 @@ export function SolicitudesTable() {
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
+            </div>
           </div>
           <div className="rounded-md border">
             <Table>
@@ -349,5 +396,31 @@ export function SolicitudesTable() {
             </div>
           </div>
         </div>
-      )
+        <Dialog open={isConfirmRechazarOpen} onOpenChange={setIsConfirmRechazarOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirmar rechazo</DialogTitle>
+              <DialogDescription>
+                ¿Estás seguro de rechazar la(s) solicitud(es) seleccionada(s)?
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" onClick={() => setIsConfirmRechazarOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  setIsConfirmRechazarOpen(false);
+                  await handleRechazarSolicitudes();
+                }}
+                disabled={isRechazando}
+              >
+                Rechazar
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
+    )
 }
