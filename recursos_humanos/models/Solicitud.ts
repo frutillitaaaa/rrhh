@@ -3,7 +3,7 @@ import { Solicitud as ISolicitud } from '@/types/solicitud';
 
 const SolicitudSchema = new Schema<ISolicitud>({
     id_empleado: { 
-        type: mongoose.Schema.Types.ObjectId, 
+        type: String, 
         ref: 'Empleado', 
         required: true 
     },
@@ -15,7 +15,7 @@ const SolicitudSchema = new Schema<ISolicitud>({
     },
     fecha_inicio: { type: String, required: true },
     fecha_termino: { type: String, required: true },
-    motivo: { type: String, required: true },
+    motivo: { type: String, default: "Sin motivo" },
     estado: { 
         type: String, 
         enum: ['Pendiente', 'Aprobada', 'Rechazada'], 

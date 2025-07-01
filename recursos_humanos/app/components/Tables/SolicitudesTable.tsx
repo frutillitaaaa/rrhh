@@ -4,7 +4,6 @@ import * as React from "react"
 
 import { useEffect, useState } from "react";
 import { Solicitud } from "@/types/solicitud";
-import { Empleado } from "@/types/empleado";
 
 import {
   Select,
@@ -29,7 +28,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Eye } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -51,83 +50,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
-
-export const columns: ColumnDef<Solicitud>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-      accessorKey: "rut",
-      header: "Rut",
-      cell: ({ row }) => <div className="capitalize">{row.getValue("rut")}</div>,
-    },
-    {
-        accessorKey: "nombre",
-        header: ({ column }) => (
-            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                Nombre <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => <div className="lowercase">{row.getValue("nombre")}</div>,
-    },
-    {
-        accessorKey: "apellido",
-        header: ({ column }) => (
-            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                Apellido <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => <div className="lowercase">{row.getValue("apellido")}</div>,
-    },
-    {
-        accessorKey: "solicitud",
-        header: ({ column }) => (
-            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-            Tipo de Solicitud <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => <div className="lowercase">{row.getValue("solicitud")}</div>,
-    },
-    {
-        accessorKey: "fecha",
-        header: ({ column }) => (
-            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                Fecha <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => <div className="lowercase">{row.getValue("fecha")}</div>,
-    },
-    {
-        id: "actions",
-        cell: ({ row }) => {
-            const empleado = row.original
-            return (
-                <DropdownMenu>
-                </DropdownMenu>
-            )
-        },
-    },
-]
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 export function SolicitudesTable() {
     const [data, setData] = React.useState<Solicitud[]>([])
@@ -136,7 +66,128 @@ export function SolicitudesTable() {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
     const [cantMostrar, setCantMostrar] = React.useState<number>(10)
+    const [selectedSolicitud, setSelectedSolicitud] = React.useState<Solicitud | null>(null);
+    const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false);
     
+    const handleVerDetalles = (solicitud: Solicitud) => {
+        setSelectedSolicitud(solicitud);
+        setIsDetailDialogOpen(true);
+    };
+
+    const columns: ColumnDef<Solicitud>[] = [
+        {
+            id: "select",
+            header: ({ table }) => (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
+        {
+            accessorKey: "nombre_empleado",
+            header: ({ column }) => (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                    Nombre Empleado <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
+            cell: ({ row }) => <div>{row.getValue("nombre_empleado") || "N/A"}</div>,
+        },
+        {
+            accessorKey: "tipo",
+            header: ({ column }) => (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                    Tipo de Solicitud <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
+            cell: ({ row }) => <div>{row.getValue("tipo")}</div>,
+        },
+        {
+            accessorKey: "estado",
+            header: ({ column }) => (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                    Estado <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
+            cell: ({ row }) => <div>{row.getValue("estado")}</div>,
+        },
+        {
+            id: "verDetalles",
+            header: "",
+            cell: ({ row }) => {
+                const solicitud = row.original;
+                const [open, setOpen] = React.useState(false);
+                return (
+                    <>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="outline" size="sm" onClick={() => setOpen(true)} className="p-0 rounded-full bg-black hover:bg-neutral-800">
+                                    <Eye className="h-5 w-5 text-white" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Ver detalles</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogContent className="max-w-md">
+                                <DialogHeader>
+                                    <DialogTitle>Detalles de la Solicitud</DialogTitle>
+                                    <DialogDescription>
+                                        Información completa de la solicitud seleccionada
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-500">Nombre Empleado</label>
+                                            <p className="text-sm">{solicitud.nombre_empleado || "N/A"}</p>
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-500">Tipo de Solicitud</label>
+                                            <p className="text-sm">{solicitud.tipo}</p>
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-500">Fecha Inicio</label>
+                                            <p className="text-sm">{solicitud.fecha_inicio}</p>
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-500">Fecha Término</label>
+                                            <p className="text-sm">{solicitud.fecha_termino}</p>
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-500">Estado</label>
+                                            <p className="text-sm">{solicitud.estado}</p>
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-500">Motivo</label>
+                                            <p className="text-sm">{solicitud.motivo || "No especificado"}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </>
+                );
+            },
+            enableSorting: false,
+            enableHiding: false,
+        },
+    ]
+
     useEffect(() => {
     
     async function fetchData() {
@@ -172,10 +223,10 @@ export function SolicitudesTable() {
         <div className="w-full">
           <div className="flex items-center py-4">
             <Input
-              placeholder="Buscar por Rut..."
-              value={(table.getColumn("rut")?.getFilterValue() as string) ?? ""}
+              placeholder="Buscar por nombre..."
+              value={(table.getColumn("nombre_empleado")?.getFilterValue() as string) ?? ""}
               onChange={(event) =>
-                table.getColumn("rut")?.setFilterValue(event.target.value)
+                table.getColumn("nombre_empleado")?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
             />
