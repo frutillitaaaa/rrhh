@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Controller, useController, useFormContext } from "react-hook-form";
+import { Controller, useController } from "react-hook-form";
 
 type DepartamentosSelectorProps = {
   value: string;
@@ -24,7 +24,6 @@ type DepartamentosSelectorProps = {
 
 
 export function DepartamentosSelector({value, onChange}: DepartamentosSelectorProps) {
-  const { control } = useFormContext();
   const [data, setData] = React.useState<Departamento[]>([])
   
   useEffect(() => {

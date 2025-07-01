@@ -56,6 +56,8 @@ import {
 } from "@/components/ui/dialog"
 import { Candidato } from "@/types/candidato"
 import { useEffect, useState } from "react";
+import { CandidatoForm } from "../Forms/CandidatoForm";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function CandidatosTable() {
     const [data, setData] = React.useState<Candidato[]>([]);
@@ -74,10 +76,17 @@ export function CandidatosTable() {
         pageSize: 10
     });
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [candidatoToEdit, setCandidatoToEdit] = useState<Candidato | null>(null);
 
     const handleVerDetalles = (candidato: Candidato) => {
         setSelectedCandidato(candidato);
         setIsDetailDialogOpen(true);
+    };
+
+    const handleEditarCandidato = (candidato: Candidato) => {
+        setCandidatoToEdit(candidato);
+        setIsEditDialogOpen(true);
     };
 
     const columns: ColumnDef<Candidato>[] = [
@@ -166,9 +175,11 @@ export function CandidatosTable() {
                   Ver detalles
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Editar datos</DropdownMenuItem>
-                <DropdownMenuItem>Convertir en empleado</DropdownMenuItem>
-                <DropdownMenuItem>Eliminar candidato</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleEditarCandidato(candidato)}
+                >
+                  Editar datos
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )
@@ -530,6 +541,31 @@ export function CandidatosTable() {
                             Eliminar
                         </Button>
                     </div>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogContent className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl">
+                    <DialogHeader>
+                        <DialogTitle>Editar Candidato</DialogTitle>
+                        <DialogDescription>
+                            Modifica los datos del candidato. El RUT no se puede cambiar.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <ScrollArea className="max-h-[70vh] p-4">
+                        {candidatoToEdit && (
+                            <CandidatoForm 
+                                onClose={() => setIsEditDialogOpen(false)} 
+                                isEditing={true} 
+                                initialData={candidatoToEdit}
+                                onSuccess={async () => {
+                                    const res = await fetch("/api/candidatos");
+                                    const newData = await res.json();
+                                    setData(newData);
+                                }}
+                            />
+                        )}
+                    </ScrollArea>
                 </DialogContent>
             </Dialog>
         </div>
