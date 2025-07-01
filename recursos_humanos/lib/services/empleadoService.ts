@@ -53,3 +53,30 @@ export async function eliminarEmpleado(id: string): Promise<{ deletedCount?: num
         throw new Error("No se pudo eliminar el empleado.");
     }
 }
+
+export async function obtenerEmpleadosPorDepartamento(departamento: string): Promise<IEmpleado[]> {
+    try {
+        await dbConnect();
+        return await Empleado.find({ departamento }).lean();
+    } catch (error) {
+        console.error(`Error en obtenerEmpleadosPorDepartamento con departamento ${departamento}:`, error);
+        throw new Error("No se pudieron obtener los empleados del departamento.");
+    }
+}
+
+export async function actualizarHistorialSueldos(empleadoId: string, nuevoHistorial: any): Promise<IEmpleado | null> {
+    try {
+        await dbConnect();
+        return await Empleado.findByIdAndUpdate(
+            empleadoId, 
+            { 
+                $push: { historial_sueldos: nuevoHistorial },
+                sueldo_liquido: nuevoHistorial.sueldo_liquido 
+            }, 
+            { new: true }
+        ).lean();
+    } catch (error) {
+        console.error(`Error en actualizarHistorialSueldos con id ${empleadoId}:`, error);
+        throw new Error("No se pudo actualizar el historial de sueldos.");
+    }
+}

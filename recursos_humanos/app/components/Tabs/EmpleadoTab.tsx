@@ -118,7 +118,51 @@ export function EmpleadoTab({empleado}: Props) {
             </CardHeader>
             <CardContent className="grid gap-6">
               <div className="grid gap-3">
-                
+                {empleado.historial_sueldos && empleado.historial_sueldos.length > 0 ? (
+                  empleado.historial_sueldos.map((historial, index) => (
+                    <div key={index} className="border rounded-lg p-4 space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h4 className="font-semibold">Período: {historial.fecha_inicio} - {historial.fecha_termino}</h4>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-gray-500">Sueldo Líquido</p>
+                          <p className="text-lg font-bold text-green-600">
+                            {new Intl.NumberFormat("es-CL", {
+                              style: "currency",
+                              currency: "CLP",
+                            }).format(historial.sueldo_liquido)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="text-gray-500">Sueldo Bruto</p>
+                          <p className="font-medium">
+                            {new Intl.NumberFormat("es-CL", {
+                              style: "currency",
+                              currency: "CLP",
+                            }).format(historial.sueldo_bruto)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Descuentos Totales</p>
+                          <p className="font-medium text-red-600">
+                            {new Intl.NumberFormat("es-CL", {
+                              style: "currency",
+                              currency: "CLP",
+                            }).format(historial.sueldo_bruto - historial.sueldo_liquido)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No hay historial de sueldos disponible</p>
+                    <p className="text-sm">Los sueldos aparecerán aquí después de generar liquidaciones</p>
+                  </div>
+                )}
               </div>
             </CardContent>
             <CardFooter>

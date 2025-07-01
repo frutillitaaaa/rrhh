@@ -80,10 +80,35 @@ export function DepartamentosTable() {
     try {
       const departamentosNombres = selectedRows.map(row => row.original.nombreDepartamento);
       console.log("Generando liquidación para departamentos:", departamentosNombres);
-      alert(`Generando liquidación para ${departamentosNombres.length} departamento(s)`);
+      
+      const response = await fetch("/api/departamentos/liquidacion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ departamentos: departamentosNombres }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error en la respuesta del servidor");
+      }
+
+      const data = await response.json();
+      const mensaje = `Liquidación generada exitosamente:
+      
+Departamentos procesados: ${data.estadisticas.totalDepartamentos}
+Empleados liquidados: ${data.estadisticas.totalEmpleados}
+Total liquidación: ${new Intl.NumberFormat("es-CL", {
+  style: "currency",
+  currency: "CLP",
+}).format(data.estadisticas.totalLiquidacion)}
+
+Los sueldos han sido actualizados en el historial de cada empleado.`;
+
+      alert(mensaje);
       table.toggleAllPageRowsSelected(false);
     } catch (error) {
-      alert("Error al procesar la generación de liquidación");
+      alert("Error al procesar la generación de liquidación: " + (error as Error).message);
       console.error("Error:", error);
     } finally {
       setIsGenerandoLiquidacion(false);
