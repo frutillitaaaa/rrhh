@@ -70,6 +70,8 @@ export function SolicitudesTable() {
     const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false);
     const [isRechazando, setIsRechazando] = React.useState(false);
     const [isConfirmRechazarOpen, setIsConfirmRechazarOpen] = useState(false);
+    const [isAceptando, setIsAceptando] = useState(false);
+    const [isConfirmAceptarOpen, setIsConfirmAceptarOpen] = useState(false);
     
     const handleVerDetalles = (solicitud: Solicitud) => {
         setSelectedSolicitud(solicitud);
@@ -108,6 +110,40 @@ export function SolicitudesTable() {
             console.error("Error:", error);
         } finally {
             setIsRechazando(false);
+        }
+    };
+
+    const handleAceptarSolicitudes = async () => {
+        const selectedRows = table.getFilteredSelectedRowModel().rows;
+        if (selectedRows.length === 0) {
+            alert("Debe seleccionar al menos una solicitud para aceptar");
+            return;
+        }
+        setIsAceptando(true);
+        try {
+            const solicitudesIds = selectedRows.map(row => row.original._id);
+            const results = await Promise.all(solicitudesIds.map(async (id) => {
+                const res = await fetch(`/api/solicitudes/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ estado: 'Aprobada' })
+                });
+                return { id, ok: res.ok };
+            }));
+            const aceptadas = results.filter(r => r.ok).length;
+            const fallidas = results.length - aceptadas;
+            alert(`Aceptadas: ${aceptadas}. Fallidas: ${fallidas}`);
+            const res = await fetch("/api/solicitudes");
+            const newData = await res.json();
+            setData(newData);
+            table.toggleAllPageRowsSelected(false);
+        } catch (error) {
+            alert("Error al procesar la aceptación");
+            console.error("Error:", error);
+        } finally {
+            setIsAceptando(false);
         }
     };
 
@@ -270,6 +306,13 @@ export function SolicitudesTable() {
             />
             <div className="ml-auto flex items-center space-x-2">
               <Button
+                onClick={() => setIsConfirmAceptarOpen(true)}
+                disabled={table.getFilteredSelectedRowModel().rows.length === 0 || isAceptando}
+                style={{ backgroundColor: '#22c55e', color: 'white' }}
+              >
+                {isAceptando ? "Aceptando..." : "Aceptar Solicitud"}
+              </Button>
+              <Button
                 onClick={() => setIsConfirmRechazarOpen(true)}
                 disabled={table.getFilteredSelectedRowModel().rows.length === 0 || isRechazando}
                 variant="destructive"
@@ -396,6 +439,31 @@ export function SolicitudesTable() {
             </div>
           </div>
         </div>
+        <Dialog open={isConfirmAceptarOpen} onOpenChange={setIsConfirmAceptarOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirmar aceptación</DialogTitle>
+              <DialogDescription>
+                ¿Estás seguro de aceptar la(s) solicitud(es) seleccionada(s)?
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" onClick={() => setIsConfirmAceptarOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                style={{ backgroundColor: '#22c55e', color: 'white' }}
+                onClick={async () => {
+                  setIsConfirmAceptarOpen(false);
+                  await handleAceptarSolicitudes();
+                }}
+                disabled={isAceptando}
+              >
+                Aceptar
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
         <Dialog open={isConfirmRechazarOpen} onOpenChange={setIsConfirmRechazarOpen}>
           <DialogContent>
             <DialogHeader>
