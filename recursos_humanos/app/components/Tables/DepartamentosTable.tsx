@@ -53,6 +53,7 @@ export function DepartamentosTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [isGenerandoLiquidacion, setIsGenerandoLiquidacion] = React.useState(false)
 
   const fetchData = async () => {
     try {
@@ -67,6 +68,27 @@ export function DepartamentosTable() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleGenerarLiquidacion = async () => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    if (selectedRows.length === 0) {
+      alert("Debe seleccionar al menos un departamento para generar liquidación");
+      return;
+    }
+    setIsGenerandoLiquidacion(true);
+
+    try {
+      const departamentosNombres = selectedRows.map(row => row.original.nombreDepartamento);
+      console.log("Generando liquidación para departamentos:", departamentosNombres);
+      alert(`Generando liquidación para ${departamentosNombres.length} departamento(s)`);
+      table.toggleAllPageRowsSelected(false);
+    } catch (error) {
+      alert("Error al procesar la generación de liquidación");
+      console.error("Error:", error);
+    } finally {
+      setIsGenerandoLiquidacion(false);
+    }
+  };
 
   const columns: ColumnDef<Departamento>[] = [
     {
@@ -214,7 +236,7 @@ export function DepartamentosTable() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-x-4">
         <Input
           placeholder="Buscar Departamento..."
           value={(table.getColumn("nombreDepartamento")?.getFilterValue() as string) ?? ""}
@@ -247,6 +269,15 @@ export function DepartamentosTable() {
           </DialogContent>
           
         </Dialog>
+
+        <Button
+          onClick={handleGenerarLiquidacion}
+          disabled={table.getFilteredSelectedRowModel().rows.length === 0 || isGenerandoLiquidacion}
+          className="ml-auto"
+          variant="default"
+        >
+          {isGenerandoLiquidacion ? "Generando..." : "Generar Liquidación"}
+        </Button>
         
       </div>
       <div className="rounded-md border">
