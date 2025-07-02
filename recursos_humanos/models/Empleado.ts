@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { Empleado as IEmpleado, Historial_cargos, Historial_sueldos, Historial_estados } from '@/types/empleado';
+import { Empleado as IEmpleado, Historial_sueldos, Historial_estados } from '@/types/empleado';
 import { Usuario } from '@/types/usuario';
 
 const HistorialSueldosSchema = new Schema<Historial_sueldos>({
@@ -8,12 +8,6 @@ const HistorialSueldosSchema = new Schema<Historial_sueldos>({
     fecha_inicio: { type: String, required: true },
     fecha_termino: { type: String, required: true },
 }, { _id: false }); 
-
-const HistorialCargosSchema = new Schema<Historial_cargos>({
-    cargo: { type: String, required: true },
-    fecha_inicio: { type: String, required: true },
-    fecha_termino: { type: String, required: true },
-}, { _id: false });
 
 const HistorialEstadosSchema = new Schema<Historial_estados>({
     estado: { type: String, required: true },
@@ -36,7 +30,6 @@ const EmpleadoSchema = new Schema<IEmpleado>({
     fecha_contratacion: { type: String, required: true },
     dias_vacaciones: { type: Number, default: null },
     historial_sueldos: [HistorialSueldosSchema],
-    historial_cargos: [HistorialCargosSchema],
     historial_estados: [HistorialEstadosSchema],
 }, {
     timestamps: true, 
