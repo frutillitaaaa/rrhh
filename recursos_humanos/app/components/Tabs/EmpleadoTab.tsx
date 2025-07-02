@@ -179,7 +179,38 @@ export function EmpleadoTab({empleado}: Props) {
             </CardHeader>
             <CardContent className="grid gap-6">
               <div className="grid gap-3">
-                
+                {empleado.historial_estados && empleado.historial_estados.length > 0 ? (
+                  empleado.historial_estados.map((historial, index) => (
+                    <div key={index} className="border rounded-lg p-4 space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h4 className="font-semibold">{historial.tipo_solicitud}</h4>
+                          <p className="text-sm text-gray-500">Fecha: {historial.fecha_cambio}</p>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            historial.estado === 'Aprobada' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {historial.estado}
+                          </span>
+                        </div>
+                      </div>
+                      {historial.motivo && (
+                        <div>
+                          <p className="text-sm text-gray-500">Motivo:</p>
+                          <p className="text-sm">{historial.motivo}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No hay historial de estados disponible</p>
+                    <p className="text-sm">Los estados aparecerán si se rechazan o aprueban las solicitudes</p>
+                  </div>
+                )}
               </div>
             </CardContent>
             <CardFooter>

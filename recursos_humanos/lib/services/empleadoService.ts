@@ -80,3 +80,25 @@ export async function actualizarHistorialSueldos(empleadoId: string, nuevoHistor
         throw new Error("No se pudo actualizar el historial de sueldos.");
     }
 }
+
+export async function actualizarHistorialEstados(empleadoId: string, nuevoEstado: any): Promise<IEmpleado | null> {
+    try {
+        console.log('Iniciando actualización de historial de estados para empleado:', empleadoId);
+        console.log('Nuevo estado:', nuevoEstado);
+        
+        await dbConnect();
+        const resultado = await Empleado.findByIdAndUpdate(
+            empleadoId, 
+            { 
+                $push: { historial_estados: nuevoEstado }
+            }, 
+            { new: true }
+        ).lean();
+        
+        console.log('Resultado de la actualización:', resultado);
+        return resultado;
+    } catch (error) {
+        console.error(`Error en actualizarHistorialEstados con id ${empleadoId}:`, error);
+        throw new Error("No se pudo actualizar el historial de estados.");
+    }
+}
