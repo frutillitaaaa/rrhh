@@ -92,6 +92,34 @@ export function EmpleadoForm({ onClose, isEditing = false, initialData, onSucces
 
   const onSubmit = async(data: z.infer<typeof formSchema> ) => {
     setError(null);
+    
+    try {
+      const [cargosRes, departamentosRes] = await Promise.all([
+        fetch("/api/cargos"),
+        fetch("/api/departamentos")
+      ]);
+      
+      const cargos = await cargosRes.json();
+      const departamentos = await departamentosRes.json();
+      const departamentoSeleccionado = departamentos.find(
+        (d: any) => d.nombreDepartamento === data.departamento
+      );
+      
+      if (departamentoSeleccionado && departamentoSeleccionado.cargos) {
+        const cargoEsValido = departamentoSeleccionado.cargos.includes(data.cargo);
+        
+        if (!cargoEsValido) {
+          setError(`❌ Error de compatibilidad: El cargo "${data.cargo}" no pertenece al departamento "${data.departamento}". 
+          
+Cargos válidos para "${data.departamento}": ${departamentoSeleccionado.cargos.join(', ')}`);
+          return;
+        }
+      }
+    } catch (validationError) {
+      setError(`Error al validar compatibilidad: ${(validationError as Error).message}`);
+      return;
+    }
+    
     try {
         const requestBody = {
           nombre: data.nombre,
@@ -122,11 +150,11 @@ export function EmpleadoForm({ onClose, isEditing = false, initialData, onSucces
         if (onSuccess) {
           onSuccess();
         }
+        onClose();
     } catch (e) {
         setError(`Error inesperado al enviar datos: ${(e instanceof Error ? e.message : e)}`);
         console.error("Error al enviar datos: ", e );
     }
-    onClose();
   }
   
   return (
