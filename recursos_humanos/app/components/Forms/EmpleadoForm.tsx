@@ -40,11 +40,7 @@ const formSchema = z.object({
     departamento: z.string().min(1, {
         message: "Debe seleccionar un departamento.",
     }),
-    sueldo_liquido: z.string().min(1, {
-        message: "El sueldo líquido no puede estar vacío.",
-    }).refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-        message: "El sueldo debe ser un número válido mayor a 0.",
-    }),
+
     estado: z.string().min(1, {
         message: "Debe seleccionar un estado.",
     }),
@@ -72,7 +68,6 @@ export function EmpleadoForm({ onClose, isEditing = false, initialData, onSucces
       telefono: initialData?.telefono || "",
       cargo: initialData?.cargo || "",
       departamento: initialData?.departamento || "",
-      sueldo_liquido: initialData?.sueldo_liquido?.toString() || "",
       estado: initialData?.estado || "Activo",
       dias_vacaciones: initialData?.dias_vacaciones?.toString() || "0",
     },
@@ -89,7 +84,6 @@ export function EmpleadoForm({ onClose, isEditing = false, initialData, onSucces
         telefono: initialData.telefono,
         cargo: initialData.cargo,
         departamento: initialData.departamento,
-        sueldo_liquido: initialData.sueldo_liquido?.toString() || "",
         estado: initialData.estado || "Activo",
         dias_vacaciones: initialData.dias_vacaciones?.toString() || "0",
       });
@@ -106,7 +100,6 @@ export function EmpleadoForm({ onClose, isEditing = false, initialData, onSucces
           telefono: data.telefono,
           cargo: data.cargo,
           departamento: data.departamento,
-          sueldo_liquido: Number(data.sueldo_liquido),
           estado: data.estado,
           dias_vacaciones: Number(data.dias_vacaciones),
         };
@@ -244,25 +237,7 @@ export function EmpleadoForm({ onClose, isEditing = false, initialData, onSucces
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
-          <FormField
-            control={form.control}
-            name="sueldo_liquido"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sueldo Líquido</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="500000" 
-                    type="number"
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="estado"
