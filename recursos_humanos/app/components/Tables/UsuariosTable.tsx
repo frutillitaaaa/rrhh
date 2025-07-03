@@ -140,8 +140,7 @@ export function UsuariosTable() {
       pageSize: 10
     });
 
-    useEffect(() => {
-      async function fetchData() {
+    async function fetchData() {
         const [empleadosRes, candidatosRes] = await Promise.all([
           fetch("/api/empleados"),
           fetch("/api/candidatos"),
@@ -163,8 +162,12 @@ export function UsuariosTable() {
         setData(usuarios);
       }
 
-      fetchData();
-    }, []);
+      const onSuccess = async () => {
+        await fetchData();
+      }
+      useEffect(() => {
+        fetchData();
+      }, []);
   
     function globalFilterFn (row: Row<Usuario>, filterValue: string):boolean {
     console.log("Row values:", row.original);
@@ -232,7 +235,7 @@ export function UsuariosTable() {
               <DialogHeader>
               <DialogTitle>Crear Usuario</DialogTitle>
               <ScrollArea className="max-h-[70vh] p-4">
-                <UsuarioForm onClose = {() => setOpen(false)}/>
+                <UsuarioForm onClose = {() => setOpen(false)} onSuccess = { onSuccess }/>
               </ScrollArea>
               </DialogHeader>
           </DialogContent>

@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -21,6 +21,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { DateSelector } from "../../../components/DateSelector";
 import { CargosSelector } from "../Selector/CargosSelector";
 import { DepartamentosSelector } from "../Selector/DepartamentosSelector";
+
 
 const formSchema = z.object({
     nombre: z.string().min(1, {
@@ -51,9 +52,12 @@ const formSchema = z.object({
 
 interface UsuarioFormProps {
   onClose:() => void;
+  onSuccess?: () => void;
 };
 
-export function UsuarioForm({ onClose }: UsuarioFormProps) {
+export function UsuarioForm({ onClose, onSuccess }: UsuarioFormProps) {
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,7 +65,8 @@ export function UsuarioForm({ onClose }: UsuarioFormProps) {
     apellido: "",
     rut: "",
     correo: "",
-    telefono: ""
+    telefono: "",
+    sueldo_ideal: undefined
     },
   })
   const tipo = useWatch({
@@ -70,35 +75,24 @@ export function UsuarioForm({ onClose }: UsuarioFormProps) {
   });
 
   const onSubmit = async(data: z.infer<typeof formSchema> ) => {
-    if(tipo === "empleado") {
-      try {
-        const req = await fetch('http://localhost:3000/api/empleados', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
+    try {
+      const endpoint = tipo === "empleado" ? "http://localhost:3000/api/empleados" : "http://localhost:3000/api/candidatos";
 
-        const res = await req.json();
-        console.log(res);
-      } catch (e) {
-        console.error("Error al enviar datos: ", e );
-      }
-    } else {
-      try {
-        const req = await fetch('http://localhost:3000/api/candidatos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
+      const req = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-        const res = await req.json();
-        console.log(res);
-      } catch (e) {
-        console.error("Error al enviar datos: ", e );
-      }
+      const res = await req.json();
+      console.log(res);
+    } catch (e) {
+      console.error("Error al enviar datos: ", e );
     }
+
+    if(onSuccess) await onSuccess();
     onClose();
-  
+    
   }
   return (
     <Form {...form}>
@@ -293,3 +287,4 @@ export function UsuarioForm({ onClose }: UsuarioFormProps) {
     </Form>
   )
 }
+
