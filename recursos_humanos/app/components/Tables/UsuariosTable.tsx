@@ -5,6 +5,8 @@ import * as React from "react"
 import { useEffect, useState } from "react";
 import type { Row } from '@tanstack/react-table';
 
+import { DescargarExcelButton } from "../Excel/Empleados/DescargaExcelButton";
+
 import { Usuario } from "@/types/usuario"
 
 import {
@@ -76,6 +78,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { UsuarioForm } from "../Forms/UsuarioForm";
 import { Empleado } from "@/types/empleado";
 import { Candidato } from "@/types/candidato";
+import { SubirExcelButton } from "../Excel/Empleados/SubidaExcelButton";
 
 export const columns: ColumnDef<Usuario>[] = [
   {

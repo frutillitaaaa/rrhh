@@ -58,6 +58,8 @@ import { Candidato } from "@/types/candidato"
 import { useEffect, useState } from "react";
 import { CandidatoForm } from "../Forms/CandidatoForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { DescargarExcelButton } from "../Excel/Candidatos/DescargaExcelButton"
+import { SubirExcelButton } from "../Excel/Candidatos/SubidaExcelButton"
 
 export function CandidatosTable() {
     const [data, setData] = React.useState<Candidato[]>([]);
@@ -331,6 +333,8 @@ export function CandidatosTable() {
                 >
                     {isEliminando ? "Eliminando..." : "Eliminar Candidato"}
                 </Button>
+                <DescargarExcelButton/>
+                <SubirExcelButton/>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">

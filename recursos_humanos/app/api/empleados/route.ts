@@ -13,9 +13,17 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const data  = await request.json();
-        const nuevoEmpleado = await crearEmpleado(data);
-        return NextResponse.json(nuevoEmpleado, { status: 201 }); 
+
+        if (!Array.isArray(data)) {
+            const nuevoEmpleado = await crearEmpleado(data);
+            return NextResponse.json(nuevoEmpleado, { status: 201 }); 
+        }
+        
+        const nuevosEmpleados = await Promise.all(data.map(crearEmpleado));
+        return NextResponse.json(nuevosEmpleados, {status: 201});
+
+
     } catch (error) {
-        return NextResponse.json({ message: 'Error al crear el empleado', error: (error as Error).message }, { status: 400 }); 
+        return NextResponse.json({ message: 'Error al crear empleado(s)', error: (error as Error).message }, { status: 400 }); 
     }
 }

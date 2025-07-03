@@ -1,3 +1,4 @@
+'use client';
 import { UsuariosTable } from "@/app/components/Tables/UsuariosTable";
 
 export default function Usuarios () {
