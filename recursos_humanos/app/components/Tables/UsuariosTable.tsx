@@ -5,8 +5,6 @@ import * as React from "react"
 import { useEffect, useState } from "react";
 import type { Row } from '@tanstack/react-table';
 
-import { DescargarExcelButton } from "../Excel/Empleados/DescargaExcelButton";
-
 import { Usuario } from "@/types/usuario"
 
 import {

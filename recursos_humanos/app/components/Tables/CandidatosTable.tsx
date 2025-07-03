@@ -333,8 +333,7 @@ export function CandidatosTable() {
                 >
                     {isEliminando ? "Eliminando..." : "Eliminar Candidato"}
                 </Button>
-                <DescargarExcelButton/>
-                <SubirExcelButton/>
+                
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">

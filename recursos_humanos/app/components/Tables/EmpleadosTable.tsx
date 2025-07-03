@@ -63,8 +63,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { DescargarExcelButton } from "../Excel/Empleados/DescargaExcelButton";
-import { SubirExcelButton } from "../Excel/Empleados/SubidaExcelButton";
 
 export function EmpleadosTable() {
   const [data, setData] = React.useState<Empleado[]>([])
@@ -290,8 +288,6 @@ export function EmpleadosTable() {
           >
             {isEliminando ? "Eliminando..." : "Eliminar Empleado"}
           </Button>
-          <DescargarExcelButton/>
-          <SubirExcelButton/>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
