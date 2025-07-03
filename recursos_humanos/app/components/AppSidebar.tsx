@@ -21,52 +21,47 @@ import { LayoutDashboard, UsersRound, Building, Layers2, ContactRound, UserPlus,
 
 const items = [
   {
-    title: "Empleados",
-    url: "/dashboard/empleados",
-    icon: UsersRound,
+    title: "Dashboard",
+    url: "/",
+    icon: LayoutDashboard,
   },
   {
-    title: "Candidatos",
-    url: "/dashboard/candidatos",
-    icon: ContactRound,
+    title: "Departamentos",
+    url: "/dashboard/departamentos",
+    icon: Building,
+  },
+  {
+    title: "Cargos",
+    url: "/dashboard/cargos",
+    icon: Layers2,
+  },
+  {
+    title: "Solicitudes",
+    url: "/dashboard/solicitudes",
+    icon: Timer,
   },
 ]
+
 export function AppSidebar() {
-    return (
-      <Sidebar>
-        <SidebarHeader/>
+  return (
+    <Sidebar>
+      <SidebarHeader>
         <h1 className="text-2xl font-bold text-blue-600 flex justify-between items-center p-6 ">RRHH</h1>
-        <SidebarContent className="fixed top-16 left-4">
-          <SidebarGroup />
-          <SidebarGroupContent >
-            <SidebarMenu 
-            >
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/">
-                    <LayoutDashboard />
-                    <span>Dashboard</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/dashboard/departamentos">
-                    <Building/>
-                    <span>Departamentos</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/dashboard/cargos">
-                    <Layers2/>
-                    <span>Cargos</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
 
               <SidebarMenuItem>
                 <Accordion
@@ -101,19 +96,11 @@ export function AppSidebar() {
                   </AccordionItem>
                     </Accordion>      
               </SidebarMenuItem>
-              <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <a href="/dashboard/solicitudes">
-                      <Timer/>
-                      <span>Solicitudes</span>
-                    </a>
-                  </SidebarMenuButton>
-              </SidebarMenuItem>
+
             </SidebarMenu>
           </SidebarGroupContent>
-          <SidebarGroup />
-        </SidebarContent>
+        </SidebarGroup>
+      </SidebarContent>
     </Sidebar>
-    )
-    
+  )
 }
