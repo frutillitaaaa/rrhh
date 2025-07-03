@@ -19,7 +19,7 @@ export default function Dashboard() {
             <CardTitle>Estadísticas →</CardTitle>
           </CardHeader>
           <CardContent>
-            Evolución nº usuarios (gráfico)
+            Próximamente...
           </CardContent>
         </Card>
           
@@ -28,7 +28,7 @@ export default function Dashboard() {
             <CardTitle>Composición por cargo</CardTitle>
           </CardHeader>
           <CardContent>
-            Gráfico de torta (después se insertará)
+            Próximamente...
           </CardContent>
         </Card>
       </div>
