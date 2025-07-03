@@ -38,15 +38,16 @@ export async function agregarCargo(cargo: Cargo): Promise<void> {
 }
 
 export async function actualizarCargo(nombreCargo: string, data: Partial<Cargo>): Promise<void> {
-    try {
-        if (data.sueldo_base) {
-            await redis.hset(CARGOS_KEY, { [nombreCargo]: data.sueldo_base });
-        }
-    } catch (error) {
-        console.error(`Error en actualizarCargo con nombre ${nombreCargo} (Redis):`, error);
-        throw new Error("No se pudo actualizar el cargo.");
+  try {
+    if (typeof data.sueldo_base === "number") {
+      await redis.hset(CARGOS_KEY, { [nombreCargo]: data.sueldo_base.toString() });
     }
+  } catch (error) {
+    console.error(`Error en actualizarCargo con nombre ${nombreCargo} (Redis):`, error);
+    throw new Error("No se pudo actualizar el cargo.");
+  }
 }
+
 
 export async function eliminarCargo(nombreCargo: string): Promise<void> {
     try {

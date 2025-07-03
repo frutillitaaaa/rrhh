@@ -22,17 +22,21 @@ export async function GET(request: Request, { params }: { params: Params }) {
     }
 }
 
-export async function PUT(request: Request, { params }: { params: Params }) {
-    try {
-        const data = await request.json();
-        const nombreCargo = params.nombreCargo;
-        
-        await actualizarCargo(nombreCargo, data);
-        
-        return NextResponse.json({ message: 'Departamento actualizado con éxito' });
-    } catch (error) {
-        return NextResponse.json({ message: 'Error al actualizar el departamento', error: (error as Error).message }, { status: 400 });
-    }
+export async function PUT(req: Request, context: { params: { id: string } }) {
+  const nombreCargo = decodeURIComponent(context.params.id);
+  const body = await req.json();
+
+  if (!body || typeof body.sueldo_base !== "number") {
+    return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  }
+
+  try {
+    await actualizarCargo(nombreCargo, { sueldo_base: body.sueldo_base });
+    return NextResponse.json({ message: "Cargo actualizado" });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "No se pudo actualizar" }, { status: 500 });
+  }
 }
 
 export async function DELETE(request: Request, { params }: { params: Params }) {

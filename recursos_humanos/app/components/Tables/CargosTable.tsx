@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { useEffect, useState } from "react";
 
-import { SquarePen, Trash2, UserPlus } from 'lucide-react';
+import { Edit, SquarePen, Trash2, UserPlus } from 'lucide-react';
 
 import {
   ColumnDef,
@@ -67,7 +67,37 @@ import { CargoForm } from "../Forms/CargoForm";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
-export const columns: ColumnDef<Cargo>[] = [
+
+
+export function CargosTable() {
+  const [open, setOpen] = useState(false)
+  const [data, setData] = useState<Cargo[]>([])
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
+  const [cantMostrar, setCantMostrar] = useState<number>(10);
+
+  async function fetchData() {
+    try {
+      const res = await fetch("/api/cargos");
+      const data = await res.json();
+      setData(data);
+
+    } catch (error) {
+      console.error("Error al obtener cargos:", error);
+    }
+    
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const onSuccess = async () => {
+    await fetchData();
+  }
+
+  const columns: ColumnDef<Cargo>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -120,47 +150,48 @@ export const columns: ColumnDef<Cargo>[] = [
     },
   },
   {
-    id: "acciones",
-    header: () => <div className="text-right">Acciones</div>,
-    enableHiding: false,
+    id: "editarCargo",
+    header: "",
     cell: ({ row }) => {
-      const cargo = row.original
+      const cargo = row.original;
+      const [open, setOpen] = React.useState(false);
 
-      function editar(cargo: string): void {
-        throw new Error("Function not implemented.");
-      }
-
-      return (
-        <div className="flex items-center align-right">
-            <Button onClick={() => editar(cargo.cargo)}>
-                <SquarePen/>
-            </Button>
-        </div>
-      )
+      return ( 
+        <>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="secondary" size="sm" onClick={() => setOpen(true)} className="p-0 rounded-full bg-black hover:bg-neutral-800">
+                <Edit className="h-5 w-5 text-white" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Editar cargo</p>
+            </TooltipContent>
+          </Tooltip>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Editar Cargo</DialogTitle>
+                <ScrollArea className="max-h-[70vh] p-4">
+                  <CargoForm 
+                    onClose={() => setOpen(false)} 
+                    isEditing={true} 
+                    initialData={cargo}
+                    onSuccess={fetchData}
+                  />
+                </ScrollArea>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </>
+      );
     },
+    enableSorting: false,
+    enableHiding: false,
   },
 ]
 
-export function CargosTable() {
-  const [open, setOpen] = useState(false)
-  const [data, setData] = React.useState<Cargo[]>([])
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [cantMostrar, setCantMostrar] = React.useState<number>(10);
-
-    useEffect(() => {
-        
-        async function fetchData() {
-          const res = await fetch("/api/cargos");
-          const data = await res.json();
-          setData(data);
-        }
-    
-        fetchData();
-      }, []);
-      
+  
 
   const table = useReactTable({
     data,
@@ -182,6 +213,7 @@ export function CargosTable() {
   })
 
   return (
+    <>
     <div className="w-full">
       <div className="flex items-center py-4 gap-x-4">
         <Input
@@ -210,7 +242,11 @@ export function CargosTable() {
               <DialogHeader>
               <DialogTitle>Crear Cargo</DialogTitle>
               <ScrollArea className="max-h-[70vh] p-4">
-                <CargoForm onClose = {() => setOpen(false)}/>
+                <CargoForm
+                  isEditing={false}
+                  onClose={() => setOpen(false)}
+                  onSuccess={onSuccess}
+                />
               </ScrollArea>
               </DialogHeader>
           </DialogContent>
@@ -310,5 +346,6 @@ export function CargosTable() {
         </div>
       </div>
     </div>
+    </>
   )
 }
